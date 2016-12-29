@@ -9,10 +9,9 @@ To get started, run the following:
 
 ```bash
 composer install
-npm install --dev
-bower install --dev
-gulp scripts
-gulp styles
+npm install
+bower install
+gulp
 vagrant up
 ```
 
