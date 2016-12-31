@@ -1,0 +1,13 @@
+AppBundle\Entity\TimeSheet:
+  timesheet_1:
+    id: 1
+    createdAt: <dateTimeBetween('-10 minutes', 'now')>
+    billTo: <address()>
+
+AppBundle\Entity\TimeSheetEntry:
+  entry_{1..4}:
+    timeSheet: '@timesheet_1'
+    hours: <randomFloat(2, 1, 5)>
+    description: <sentence(10)>
+    hourlyPrice: <randomFloat(2, 25, 100)>
+    createdAt: <dateTimeBetween('-10 minutes', 'now')>
