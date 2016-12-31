@@ -18,8 +18,6 @@ class TimeSheetRepository extends EntityRepository {
     public function getDefaultOrNew() {
 
         $result = $this->createQueryBuilder('timesheet')
-            ->andWhere('timesheet.id = :timeSheetId')
-            ->setParameter('timeSheetId', 1)
             ->getQuery()
             ->getOneOrNullResult();
 
