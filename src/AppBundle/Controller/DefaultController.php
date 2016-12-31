@@ -34,7 +34,6 @@ class DefaultController extends Controller
         //Get the time sheet entries
         $entries = $timeSheet->getEntries();
 
-        // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
             'timeSheet' => $timeSheet,
             'entries' => $entries,

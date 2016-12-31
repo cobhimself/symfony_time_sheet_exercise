@@ -12,7 +12,7 @@
             <div class="form">
                 <div class="form-group">
                     <label for="billTo">Bill To</label>
-                    <textarea class="form-control" rows="3" id="billTo" cols="100"></textarea>
+                    <textarea class="form-control" rows="3" id="billTo" cols="100">{{ timeSheet.billTo }}</textarea>
                 </div>
             </div>
         </div>
@@ -28,6 +28,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                        {% for entry in entries %}
+                        <tr>
+                            <td>{{ entry.description }}</td>
+                            <td>{{ entry.hourlyPrice }}</td>
+                            <td>{{ entry.hours }}</td>
+                            <td>Total</td>
+                        </tr>
+                        {% endfor %}
                     <tr>
                         <td>
                             <input type="text" class="form-control" name="description">
@@ -35,7 +43,7 @@
                         <td>
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input type="text" class="form-control" name="hourly">
+                                <input type="text" class="form-control" name="hourlyPrice">
                             </div>
                         </td>
                         <td><input type="text" class="form-control" name="hours"></td>
