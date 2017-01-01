@@ -107,6 +107,16 @@ class TimeSheetEntry {
     }
 
     /**
+     * Return the total cost amount for this entry.
+     *
+     * @return float
+     */
+    public function getTotal()
+    {
+        return $this->hourlyPrice * $this->hours;
+    }
+
+    /**
      * @return float
      */
     public function getHours() {
