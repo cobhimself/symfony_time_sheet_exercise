@@ -12,7 +12,7 @@
             <div class="form">
                 <div class="form-group">
                     <label for="billTo">Bill To</label>
-                    <textarea class="form-control" rows="3" id="billTo" cols="100">{{ timeSheet.billTo }}</textarea>
+                    <textarea class="form-control" rows="3" id="billTo" cols="100" name="billTo">{{ timeSheet.billTo }}</textarea>
                 </div>
             </div>
         </div>
@@ -29,14 +29,18 @@
                 </thead>
                 <tbody>
                         {% for entry in entries %}
-                        <tr>
-                            <td>{{ entry.description }}</td>
-                            <td>{{ entry.hourlyPrice }}</td>
-                            <td>{{ entry.hours }}</td>
-                            <td>Total</td>
+                        <tr class="js-existing-entry" id="entry_{{ entry.id }}">
+                            <td class="js-entry-description">{{ entry.description }}</td>
+                            <td class="js-entry-hourlyPrice">{{ "$%01.2f"|format(entry.hourlyPrice) }}</td>
+                            <td class="js-entry-hours">{{ "%01.2f"|format(entry.hours) }}</td>
+                            <td class="js-entry-total row-total">{{ "$%01.2f"|format(entry.total) }}</td>
+                            <td class="js-entry-controls">
+                                <button type="button" class="js-entry-edit" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-edit"></i></button>
+                                <button type="button" class="js-entry-delete" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-remove"></i></button>
+                            </td>
                         </tr>
                         {% endfor %}
-                    <tr>
+                    <tr id="newEntryFormContainer">
                         <td>
                             <input type="text" class="form-control" name="description">
                         </td>
@@ -48,7 +52,7 @@
                         </td>
                         <td><input type="text" class="form-control" name="hours"></td>
                         <td class="row-total">$0</td>
-                        <td><button class="btn btn-default" type="button"><i class="glyphicon glyphicon-plus-sign"></i>Add</button></td>
+                        <td><button class="btn btn-default js-add-entry-button" type="button"><i class="glyphicon glyphicon-plus-sign"></i>Add</button></td>
                     </tr>
                     <tr class="blank-row-bg" id="subtotal_row">
                         <td class="totals-label" colspan="4">Subtotal</td>
@@ -76,5 +80,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript">PE.initTimeSheet();</script>
+    <script type="text/javascript">PE.timesheet.init();</script>
 {% endblock %}
