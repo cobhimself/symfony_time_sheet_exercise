@@ -4,9 +4,7 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
-    notify = require('gulp-notify'),
-    form, formName,
-    jsForms = ['register', 'login', 'forgotPassword', 'profile', 'changePassword', 'resetPassword'];
+    notify = require('gulp-notify');
 
 gulp.task('scripts', function(cb) {
     'use strict';
@@ -14,12 +12,12 @@ gulp.task('scripts', function(cb) {
     /**
      * Put together the top level JS in our JS folder.
      */
-    gulp.src(['./web/assets/js/util.js', './www/assets/js/*.js'])
+    gulp.src(['./web/assets/js/PE.util.js', './web/assets/js/PE.*.js'])
         .pipe(sourcemaps.init())
         .pipe(jshint('.jshintrc'))
         .pipe(jshint.reporter('default'))
         .pipe(concat('main.js'))
-        .pipe(gulp.dest('www/assets/dist/js'))
+        .pipe(gulp.dest('web/assets/dist/js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify({
             'drop_debugger': true,

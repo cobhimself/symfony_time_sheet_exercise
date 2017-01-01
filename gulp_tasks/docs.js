@@ -9,3 +9,9 @@ gulp.task('docs', function () {
     .pipe(markdown())
     .pipe(gulp.dest('docs'));
 });
+
+gulp.task('jsDocs', function () {
+    var jsDocCmd = 'jsdoc -c ./jsdoc.conf.json';
+
+    exec(jsDocCmd);
+});
