@@ -19,3 +19,4 @@
 .idea/
 .vagrant/
 /web/assets/dist/
+/docs/
