@@ -35,6 +35,7 @@
                             <td class="js-entry-hours">{{ "%01.2f"|format(entry.hours) }}</td>
                             <td class="js-entry-total row-total">{{ "$%01.2f"|format(entry.total) }}</td>
                             <td class="js-entry-controls">
+                                <button type="button" class="hidden js-entry-save" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-floppy-disk"></i>Save</button>
                                 <button type="button" class="js-entry-edit" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-edit"></i></button>
                                 <button type="button" class="js-entry-delete" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-remove"></i></button>
                             </td>
@@ -80,5 +81,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript">PE.timesheet.init();</script>
+    <script type="text/javascript">new PE.TimeSheet({{ timeSheet.id }}).init();</script>
 {% endblock %}
