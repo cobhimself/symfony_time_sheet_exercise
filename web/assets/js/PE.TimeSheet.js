@@ -2,19 +2,20 @@
     'use strict';
 
     /**
-     * PE.timesheet
-     *
-     * This module contains the main methods for our time sheet interface.
-     *
-     * @return {} Returns nothing.
-     * @name PE.timesheet
-     * @namespace {Object} PE.timesheet
+     * @class PE.TimeSheet
      */
-    PE.timesheet = (function (){
+    PE.TimeSheet = function TimeSheet(id) {
+        if (!(this instanceof PE.TimeSheet)) {
+            return new PE.TimeSheet(id);
+        }
+
+        this.id = id;
+    };
+
+    PE.TimeSheet.prototype = (function () {
         var self = {},
             $timeEntryTable = $('#timeEntryTable'),
             $timeEntryForm = $('#timeEntryForm'),
-            timeSheetId,
             cache = new PE.util.Cache();
 
         /**
@@ -78,7 +79,12 @@
          * @this {TimeSheetEntry}
          */
         self.onEntryEdit = function onEntryEdit() {
-            alert(this.entryId);
+            //Hide the edit and delete buttons.
+            $(this).showSaveButton().showEditInputs();
+
+            $(editButton).hide();
+            $(deleteButton).hide();
+            $(saveButton).show();
         };
 
         /**
@@ -94,15 +100,12 @@
          * Initialize the timesheet module with the timesheet id.
          * @param id
          */
-        self.init = function init(id) {
-            timeSheetId = id;
+        self.init = function init() {
             self.bind();
         };
 
         return {
             'init': self.init
         };
-
     }());
-
 }(window.PE = window.PE || {}, jQuery));
