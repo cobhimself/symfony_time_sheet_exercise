@@ -5,14 +5,14 @@
      * @class PE.TimeSheet
      */
     PE.TimeSheet = function TimeSheet(id) {
+
+        //Force this to be called with "new"
         if (!(this instanceof PE.TimeSheet)) {
             return new PE.TimeSheet(id);
         }
 
         this.id = id;
-    };
 
-    PE.TimeSheet.prototype = (function () {
         var self = {},
             $timeEntryTable = $('#timeEntryTable'),
             $timeEntryForm = $('#timeEntryForm'),
@@ -52,7 +52,7 @@
         self.addAndBindExistingEntry = function addAndBindExistingEntry() {
             var data, entries, entry, cacheKey = 'entries';
 
-            entry = new PE.TimeSheetEntry({
+            entry = new PE.TimeSheetEntry().init({
                 'row': this,
                 'onDelete': self.onEntryDelete,
                 'onEdit': self.onEntryEdit
@@ -80,11 +80,10 @@
          */
         self.onEntryEdit = function onEntryEdit() {
             //Hide the edit and delete buttons.
-            $(this).showSaveButton().showEditInputs();
-
-            $(editButton).hide();
-            $(deleteButton).hide();
-            $(saveButton).show();
+            this.showOrHide('saveButton')
+                .showEditInputs()
+                .showOrHide('editButton', false)
+                .showOrHide('deleteButton', false);
         };
 
         /**
@@ -107,5 +106,5 @@
         return {
             'init': self.init
         };
-    }());
+    };
 }(window.PE = window.PE || {}, jQuery));
