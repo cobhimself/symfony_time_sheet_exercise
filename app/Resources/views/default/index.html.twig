@@ -34,25 +34,32 @@
                             <td class="js-entry-hourlyPrice">{{ "$%01.2f"|format(entry.hourlyPrice) }}</td>
                             <td class="js-entry-hours">{{ "%01.2f"|format(entry.hours) }}</td>
                             <td class="js-entry-total row-total">{{ "$%01.2f"|format(entry.total) }}</td>
-                            <td class="js-entry-controls">
-                                <button type="button" class="hidden js-entry-save" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-floppy-disk"></i>Save</button>
-                                <button type="button" class="js-entry-edit" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-edit"></i></button>
-                                <button type="button" class="js-entry-delete" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-remove"></i></button>
+                            <td class="entry-controls">
+                                    <button type="button" class="js-entry-save btn btn-success" data-entry="{{ entry.id }}" style="display: none"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                    <button type="button" class="js-entry-cancel btn btn-danger" data-entry="{{ entry.id }}" style="display: none"><i class="glyphicon glyphicon-ban-circle"></i></button>
+                                    <button type="button" class="js-entry-edit btn btn-primary" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-edit"></i></button>
+                                    <button type="button" class="js-entry-delete btn btn-danger" data-entry="{{ entry.id }}"><i class="glyphicon glyphicon-trash"></i></button>
                             </td>
                         </tr>
                         {% endfor %}
                     <tr id="newEntryFormContainer">
-                        <td>
-                            <input type="text" class="form-control" name="description">
-                        </td>
-                        <td>
+                        <td class="js-entry-description">
                             <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input type="text" class="form-control" name="hourlyPrice">
+                                <input type="text" class=".js-entry-description-input form-control" name="description">
                             </div>
                         </td>
-                        <td><input type="text" class="form-control" name="hours"></td>
-                        <td class="row-total">$0</td>
+                        <td class="js-entry-hourlyPrice">
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="text" class=".js-entry-price-input form-control" name="hourlyPrice">
+                            </div>
+                        </td>
+                        <td class="js-entry-hours">
+                            <div class="input-group">
+                                <input type="text" class=".js-entry-hours-input form-control" name="hours">
+                            </div>
+                        </td>
+                        <td class="js-entry-total row-total">$0</td>
                         <td><button class="btn btn-default js-add-entry-button" type="button"><i class="glyphicon glyphicon-plus-sign"></i>Add</button></td>
                     </tr>
                     <tr class="blank-row-bg" id="subtotal_row">
