@@ -16,13 +16,14 @@
         var self = {},
             $timeEntryTable = $('#timeEntryTable'),
             $timeEntryForm = $('#timeEntryForm'),
+            $newEntryRowTemplate = $('#newEntryFormContainer').clone(),
             cache = new PE.util.Cache();
 
         /**
          * Take the data from the new entry form and create a new entry.
          */
         self.addNewEntry = function addNewEntry() {
-
+            console.log('Create addNewEntryMethod');
         };
 
         /**
@@ -50,12 +51,15 @@
          * @this {jQuery}
          */
         self.addAndBindExistingEntry = function addAndBindExistingEntry() {
-            var data, entries, entry, cacheKey = 'entries';
+            var entries, entry, cacheKey = 'entries';
 
             entry = new PE.TimeSheetEntry().init({
                 'row': this,
                 'onDelete': self.onEntryDelete,
-                'onEdit': self.onEntryEdit
+                'onEdit': self.onEntryEdit,
+                'onSave': self.onEntrySave,
+                'onCancel': self.onEntrySaveCancel,
+                'entryRowTemplate': $newEntryRowTemplate
             });
 
             entries = cache.get(cacheKey);
@@ -81,9 +85,35 @@
         self.onEntryEdit = function onEntryEdit() {
             //Hide the edit and delete buttons.
             this.showOrHide('saveButton')
+                .showOrHide('cancelButton')
                 .showEditInputs()
                 .showOrHide('editButton', false)
                 .showOrHide('deleteButton', false);
+        };
+
+        /**
+         * Callback for when an entry is saved.
+         *
+         * @callback
+         * @this {TimeSheetEntry}
+         */
+        self.onEntrySave = function onEntrySave() {
+            alert('Saving' + this.entryId);
+        };
+
+        /**
+         * Callback for when the user clicks the cancel button while editing
+         * an entry.
+         *
+         * @callback
+         * @this {TimeSheetEntry}
+         */
+        self.onEntrySaveCancel = function onEntrySaveCancel() {
+            this.showOrHide('saveButton', false)
+                .showOrHide('cancelButton', false)
+                .showEditInputs(false)
+                .showOrHide('editButton')
+                .showOrHide('deleteButton');
         };
 
         /**
