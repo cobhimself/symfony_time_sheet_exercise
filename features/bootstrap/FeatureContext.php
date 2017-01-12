@@ -53,13 +53,29 @@ class FeatureContext extends MinkContext implements Context
         $loader = new ContainerAwareLoader($this->getContainer());
         $loader->loadFromDirectory(__DIR__.'/../../src/AppBundle/DataFixtures/');
 
+        //Purge the database.
         $purger = new ORMPurger($this->getEntityManager());
+        $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
         //Execute them!
         $executor = new ORMExecutor($this->getEntityManager(), $purger);
+        $this->setForeignKeyChecks(0);
         $executor->execute($loader->getFixtures());
+        $this->setForeignKeyChecks(1);
     }
 
+    private function setForeignKeyChecks($val)
+    {
+        /**
+         * @type \Doctrine\DBAL\Connection
+         */
+        $dbConn = $this->getContainer()->get('doctrine')->getConnection();
+        $dbConn->exec('SET FOREIGN_KEY_CHECKS='.$val);
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager
+     */
     private function getEntityManager()
     {
         return $this->getContainer()->get('doctrine')->getManager();
@@ -115,5 +131,13 @@ class FeatureContext extends MinkContext implements Context
      */
     public function setKernel(KernelInterface $kernel) {
         return $this->kernel = $kernel;
+    }
+
+    /**
+     * @Then the data should be empty
+     */
+    public function theDataShouldBeEmpty()
+    {
+        Assert::assertEmpty($this->getObjectFromJson(), 'The json data is not empty!');
     }
 }

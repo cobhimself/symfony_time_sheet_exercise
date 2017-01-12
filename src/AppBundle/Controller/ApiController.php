@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\TimeSheetEntry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,5 +35,32 @@ class ApiController extends Controller
             ->getDefaultOrNew();
 
         return $this->json($timeSheet->serialize(), 200, array('Content-Type: application/json'));
+    }
+
+    /**
+     * Get time sheet entry data
+     *
+     * @Route("/api/timesheet/{id}", name="api_timesheet_entry")
+     * @Method("GET")
+     * @param Request $request
+     * @param Int $id
+     *
+     * @return Response
+     */
+    public function getTimeSheetEntryAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $timeSheetEntry = $em->getRepository('AppBundle:TimeSheetEntry')->findOneBy(array('id' => $id));
+
+        if($timeSheetEntry === null)
+        {
+            $data = array();
+            $code = 404;
+        } else {
+            $code = 200;
+            $data = $timeSheetEntry->serialize();
+        }
+
+        return $this->json($data, $code, array('Content-Type: application/json'));
     }
 }
