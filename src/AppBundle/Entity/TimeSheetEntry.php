@@ -153,4 +153,19 @@ class TimeSheetEntry {
         return $this;
     }
 
+    /**
+     * Return an array of data for this timesheet.
+     */
+    public function serialize() {
+        $data = [
+            'id' => $this->getId(),
+            'timeSheetId' => $this->getTimeSheet()->getId(),
+            'createdAt' => $this->getCreatedAt(),
+            'description' => $this->getDescription(),
+            'hourlyPrice' => $this->getHourlyPrice(),
+            'hours' => $this->getHours()
+        ];
+
+        return $data;
+    }
 }

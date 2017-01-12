@@ -10,6 +10,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -112,5 +113,18 @@ class TimeSheet {
         $this->setBillTo($request->query->get('billTo'));
 
         return $this;
+    }
+
+    public function serialize() {
+        foreach ($this->getEntries() as $entry) {
+            $entryData = $entry->serialize();
+        }
+
+        return  [
+            'id' => $this->getId(),
+            'billTo' => $this->getBillTo(),
+            'entries' => $entryData,
+            'createdAt' => $this->getCreatedAt()
+        ];
     }
 }
