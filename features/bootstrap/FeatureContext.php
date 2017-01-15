@@ -24,6 +24,7 @@ class FeatureContext extends MinkContext implements Context {
 
     private $jsonData;
     private $postData;
+    private $useBadData = false;
 
     /**
      * Initializes context.
@@ -78,17 +79,24 @@ class FeatureContext extends MinkContext implements Context {
      */
     public function iRequest($method, $uri) {
         $data = array();
+
         if ($method === 'POST') {
             if (!$this->postData) {
                 throw new Exception('Cannot send post data when it is not set!');
             }
-            $data = $this->postData;
+            if ($this->useBadData) {
+                $data = $this->postData;
+            } else {
+                $data = json_encode($this->postData);
+            }
+        } else {
+            $data = json_encode($data);
         }
 
         $this->getSession()
             ->getDriver()
             ->getClient()
-            ->request($method, $uri, array(), array(), array(), json_encode($data));
+            ->request($method, $uri, array(), array(), array(), $data);
 //        $this->getSession()->visit($uri);
     }
 
@@ -198,11 +206,8 @@ class FeatureContext extends MinkContext implements Context {
     public function aPropertyShouldEqual($key, PyStringNode $string) {
         $data = $this->getObjectFromJson();
         $key = $this->camelize($key);
-        if (is_array($data)) {
-            $actual = $data[$key];
-        } else if (is_object($data)) {
-            $actual = $data->$key;
-        }
+
+        $actual = $this->getValueFromArrayOrObjectKey($data, $key);
 
         Assert::assertEquals($string->getRaw(), $actual);
     }
@@ -212,11 +217,16 @@ class FeatureContext extends MinkContext implements Context {
      * @param $key
      * @param $value
      */
-    public function aPropertyShouldEqual2($key, $value) {
+    public function aPropertyShouldEqualInline($key, $value) {
         $data = $this->getObjectFromJson();
+        $actual = $this->getValueFromArrayOrObjectKey(
+            $data,
+            $this->camelize($key)
+        );
+
         Assert::assertEquals(
             $value,
-            $data[$key],
+            $actual,
             'The ' . $key . ' property does not equal ' . $value . '!'
         );
     }
@@ -226,7 +236,8 @@ class FeatureContext extends MinkContext implements Context {
      */
     public function iHaveInvalidJsonData()
     {
-        $this->postData = '{";\'}';
+        $this->postData = '{"bad_quote\': false;}';
+        $this->useBadData = true;
     }
 
     /**
@@ -248,6 +259,28 @@ class FeatureContext extends MinkContext implements Context {
     public function iUseTheFirstReturnedTimeSheetInTheResponse()
     {
         $data = $this->getObjectFromJson();
+        if (!is_array($data)) {
+            throw new \TypeError('The data returned from the response is not an array!');
+        }
         $this->jsonData = array_pop($data);
+    }
+
+    /**
+     * Get the value of the given key regardless of whether or not the given
+     * data is an object or array.
+     *
+     * @param $data
+     * @param $key
+     *
+     * @return mixed
+     */
+    private function getValueFromArrayOrObjectKey($data, $key) {
+        if (is_array($data)) {
+            $actual = $data[$key];
+        } else if (is_object($data)) {
+            $actual = $data->$key;
+        }
+
+        return $actual;
     }
 }
