@@ -39,9 +39,18 @@ Feature: Timesheet Entry Api access
       | 1             | 4.5   | My description | 3.5          |
     And I request "POST /api/timesheet/entry"
     Then the response status code should be 201
+    And I use the first returned time sheet entry in the response
     And an "id" property should exist
     And a "time sheet id" property should equal 1
     And an "hours" property should equal "4.5"
     And a "description" property should equal "My description"
     And an "hourly price" property should equal "3.5"
     And a "created at" property should exist
+
+  Scenario: POST invalid time sheet entry data
+    Given I have invalid json data
+    And I request "POST /api/timesheet/entry"
+    Then the response status code should be 400
+    And the content type should be "application/problem+json"
+    And a "title" property should equal "The JSON that was sent is invalid!"
+    And a "type" property should equal "invalid_body_format"
