@@ -31,7 +31,8 @@ Feature: Api access
     Given I have the following data:
     | bill to                                                 |
     | 85289 Daniel Gardens Suite 775 Margarettatown, IA 64118 |
-    And I request "POST /api/timesheet/"
+    And I request "POST /api/timesheet"
+    And I use the first returned time sheet in the response
     Then the response status code should be 201
     And an "id" property should exist
     And a "bill to" property should equal:
@@ -40,3 +41,10 @@ Feature: Api access
     """
     And a "created at" property should exist
 
+  Scenario: POST invalid time sheet data
+    Given I have invalid json data
+    And I request "POST /api/timesheet"
+    Then the response status code should be 400
+    And the content type should be "application/problem+json"
+    And a "title" property should equal "The JSON that was sent is invalid!"
+    And a "type" property should equal "invalid_body_format"

@@ -77,8 +77,6 @@ class FeatureContext extends MinkContext implements Context {
      * @throws Exception
      */
     public function iRequest($method, $uri) {
-//        $driver = new GoutteDriver();
-//        $request = $driver->getClient()->request($parts[0], $parts[1]);
         $data = array();
         if ($method === 'POST') {
             if (!$this->postData) {
@@ -90,7 +88,7 @@ class FeatureContext extends MinkContext implements Context {
         $this->getSession()
             ->getDriver()
             ->getClient()
-            ->request($method, $uri, $data);
+            ->request($method, $uri, array(), array(), array(), json_encode($data));
 //        $this->getSession()->visit($uri);
     }
 
@@ -104,7 +102,18 @@ class FeatureContext extends MinkContext implements Context {
      */
     public function iHaveTheFollowingData(TableNode $table)
     {
-        $this->postData = $table->getHash();
+        $hash = $table->getHash();
+        $data = array();
+
+        //Go through the hash and rename the keys to be camelized.
+        foreach ($hash as $rowId => $row) {
+            $data[$rowId] = array();
+            foreach($row as $key => $value) {
+                $data[$rowId][$this->camelize($key)] = $value;
+            }
+        }
+
+        $this->postData = $data;
     }
 
     /**
@@ -188,7 +197,14 @@ class FeatureContext extends MinkContext implements Context {
      */
     public function aPropertyShouldEqual($key, PyStringNode $string) {
         $data = $this->getObjectFromJson();
-        Assert::assertEquals($string->getLine(), $data[$key]);
+        $key = $this->camelize($key);
+        if (is_array($data)) {
+            $actual = $data[$key];
+        } else if (is_object($data)) {
+            $actual = $data->$key;
+        }
+
+        Assert::assertEquals($string->getRaw(), $actual);
     }
 
     /**
@@ -203,5 +219,35 @@ class FeatureContext extends MinkContext implements Context {
             $data[$key],
             'The ' . $key . ' property does not equal ' . $value . '!'
         );
+    }
+
+    /**
+     * @Given I have invalid json data
+     */
+    public function iHaveInvalidJsonData()
+    {
+        $this->postData = '{";\'}';
+    }
+
+    /**
+     * @Then the content type should be :type
+     * @param $type
+     */
+    public function theContentTypeShouldBe($type)
+    {
+        Assert::assertEquals(
+            $type,
+            $this->getSession()->getResponseHeader('Content-Type'),
+            'The content type is not '.$type
+        );
+    }
+
+    /**
+     * @Then /I use the first returned .* in the response/
+     */
+    public function iUseTheFirstReturnedTimeSheetInTheResponse()
+    {
+        $data = $this->getObjectFromJson();
+        $this->jsonData = array_pop($data);
     }
 }

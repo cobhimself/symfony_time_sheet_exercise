@@ -116,6 +116,7 @@ class TimeSheet {
     }
 
     public function serialize() {
+        $entryData = array();
         foreach ($this->getEntries() as $entry) {
             $entryData = $entry->serialize();
         }

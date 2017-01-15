@@ -1,7 +1,9 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Api;
 
+use AppBundle\Api\ApiProblem;
+use AppBundle\Entity\TimeSheet;
 use Doctrine\DBAL\Logging\DebugStack;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -13,9 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
  * Class ApiController
  * @package AppBundle\Controller
  */
-class ApiController extends Controller
+class ApiController extends ApiBaseController
 {
-
     /**
      * Get time sheet entry data
      *
@@ -40,7 +41,7 @@ class ApiController extends Controller
             $data = $timeSheetEntry->serialize();
         }
 
-        return $this->json($data, $code, array('Content-Type: application/json'));
+        return $this->jsonResponse($data, $code);
     }
 
     /**
@@ -56,12 +57,6 @@ class ApiController extends Controller
      */
     public function getTimeSheetEntryList(Request $request)
     {
-        $logger = new DebugStack();
-        $this
-            ->get('doctrine')
-            ->getConnection()
-            ->getConfiguration()
-            ->setSQLLogger($logger);
         $em = $this->getDoctrine()->getManager();
         $collection = $em->getRepository('AppBundle:TimeSheetEntry')
             ->findAll();
@@ -77,8 +72,58 @@ class ApiController extends Controller
             $status = 404;
         }
 
-        return $this->json($data, $status, array('Content-Type: application/json'));
+        return $this->jsonResponse($data, $status);
     }
+
+    /**
+     * POST a new time sheet entry.
+     *
+     * @Route("/api/timesheet/entry", name="api_post_timesheet_entry")
+     * @Method("POST")
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function putTimeSheetEntry(Request $request) {
+        $data = $this->getDecodedJsonFromRequest($request);
+    }
+
+    /**
+     * POST one or more new time sheet entries.
+     *
+     * @Route("/api/timesheet", name="api_post_timesheet")
+     * @Method("POST")
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function postTimeSheet(Request $request) {
+
+        $data = $this->getDecodedJsonFromRequest($request);
+
+        $newTimeSheets = array();
+        $em = $this->getDoctrine()->getManager();
+
+        foreach ($data as $row) {
+            $timeSheet = new TimeSheet();
+            $timeSheet->setBillTo($row->billTo);
+            $em->persist($timeSheet);
+            $newTimeSheets[] = $timeSheet;
+        }
+
+        $em->flush();
+
+        //Create new data now that we can get the ids of the new time sheets.
+        $data = [];
+
+        foreach ($newTimeSheets as $timeSheet) {
+            $data[] = $timeSheet->serialize();
+        }
+
+        return $this->jsonResponse($data, 201);
+    }
+
+
     /**
      * Get a specific time sheet object
      *
@@ -104,20 +149,19 @@ class ApiController extends Controller
             $status = 404;
         }
 
-        return $this->json($data, $status, array('Content-Type: application/json'));
+        return $this->jsonResponse($data, $status);
     }
 
     /**
-     * Get a list of all timesheets.
+     * Get a list of all time sheets.
      *
      * @todo Paginate the results.
      *
      * @Route("/api/timesheet", name="api_timesheet_list")
      * @Method("GET")
      * @param Request $request
-     * @param Int $id
      *
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function getTimeSheetList(Request $request)
     {
@@ -135,7 +179,7 @@ class ApiController extends Controller
             $status = 404;
         }
 
-        return $this->json($data, $status, array('Content-Type: application/json'));
+        return $this->jsonResponse($data, $status);
     }
 
 }

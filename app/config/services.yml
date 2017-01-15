@@ -7,3 +7,10 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+  # If a thrown exception is an ApiProblemException,
+  # send it in the right format!
+  api_exception_subscriber:
+    class: AppBundle\EventListener\ApiExceptionSubscriber
+    arguments: []
+    tags:
+        - { name: kernel.event_subscriber }

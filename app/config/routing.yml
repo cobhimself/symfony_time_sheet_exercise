@@ -1,3 +1,9 @@
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation
+app_api:
+    resource: "@AppBundle/Controller/Api"
+    type:     annotation
+    defaults:
+      # Instruct symfony to send responses as json
+      _format: json
