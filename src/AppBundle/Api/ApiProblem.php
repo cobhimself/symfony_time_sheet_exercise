@@ -18,7 +18,7 @@ class ApiProblem {
     const TYPE_INVALID_BODY = 'invalid_body_format';
 
     private static $titles = array(
-        self::TYPE_INVALID_BODY, 'The JSON that was sent is invalid!'
+        self::TYPE_INVALID_BODY => 'The JSON that was sent is invalid!'
     );
 
     private $title;
@@ -29,7 +29,7 @@ class ApiProblem {
 
     private $extraData = array();
 
-    public function __construct($statusCode, $type, $title) {
+    public function __construct($statusCode, $type) {
         $this->statusCode = $statusCode;
         $this->type = $type;
 

@@ -2,6 +2,7 @@
 namespace AppBundle\Controller\Api;
 
 
+use AppBundle\Api\ApiProblem;
 use AppBundle\Api\ApiProblemException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
