@@ -35,16 +35,26 @@ Feature: Timesheet Entry Api access
 
   Scenario: POST time sheet entry data
     Given I have the following data:
-      | time sheet id | hours | description    | hourly price |
-      | 1             | 4.5   | My description | 3.5          |
+      | time sheet id | hours | description        | hourly price |
+      | 1             | 4.5   | My description     | 3.5          |
+      | 1             | 3     | Second description | 3            |
     And I request "POST /api/timesheet/entry"
     Then the response status code should be 201
-    And I use the first returned time sheet entry in the response
+    And I should have a list of data
+    And the list should contain 2 entries
+    And regarding item 1 returned in the response
     And an "id" property should exist
     And a "time sheet id" property should equal 1
     And an "hours" property should equal "4.5"
     And a "description" property should equal "My description"
     And an "hourly price" property should equal "3.5"
+    And a "created at" property should exist
+    And regarding item 2 returned in the response
+    And an "id" property should exist
+    And a "time sheet id" property should equal 1
+    And an "hours" property should equal "3"
+    And a "description" property should equal "Second description"
+    And an "hourly price" property should equal "3"
     And a "created at" property should exist
 
   Scenario: POST invalid time sheet entry data

@@ -184,6 +184,14 @@ class FeatureContext extends MinkContext implements Context {
     }
 
     /**
+     * @Then the list should contain :arg1 entries
+     */
+    public function theListContainsEntries($arg1)
+    {
+        Assert::assertEquals(2, count($this->getObjectFromJson()));
+    }
+
+    /**
      * @Then the data should have values for the following:
      * @param PyStringNode $string
      */
@@ -202,14 +210,18 @@ class FeatureContext extends MinkContext implements Context {
      * @Then a :key property should equal:
      * @param $key
      * @param PyStringNode $string
+     *
+     * @throws Exception
      */
     public function aPropertyShouldEqual($key, PyStringNode $string) {
         $data = $this->getObjectFromJson();
         $key = $this->camelize($key);
 
+        $rowString = $string->getStrings()[0];
+
         $actual = $this->getValueFromArrayOrObjectKey($data, $key);
 
-        Assert::assertEquals($string->getRaw(), $actual);
+        Assert::assertEquals($rowString, $actual);
     }
 
     /**
@@ -254,15 +266,20 @@ class FeatureContext extends MinkContext implements Context {
     }
 
     /**
-     * @Then /I use the first returned .* in the response/
+     *
+     * @Then regarding item :num returned in the response
+     * @throws TypeError
      */
-    public function iUseTheFirstReturnedTimeSheetInTheResponse()
+    public function iRegardingItemInTheResponse($num)
     {
+        //We need to do a fresh fetch of the object from json
+        //so we can access a different index from it.
+        $this->jsonData = null;
         $data = $this->getObjectFromJson();
         if (!is_array($data)) {
             throw new \TypeError('The data returned from the response is not an array!');
         }
-        $this->jsonData = array_pop($data);
+        $this->jsonData = $data[$num-1];
     }
 
     /**
