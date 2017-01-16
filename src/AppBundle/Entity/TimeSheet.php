@@ -16,8 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TimeSheetRepository")
  * @ORM\Table(name="time_sheet")
+ * @ORM\HasLifecycleCallbacks()
  */
 class TimeSheet {
+
+    use CreatedUpdatedTrait;
 
     /**
      * @ORM\Id
@@ -30,6 +33,11 @@ class TimeSheet {
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\TimeSheetEntry", mappedBy="timeSheet")
@@ -127,5 +135,12 @@ class TimeSheet {
             'entries' => $entryData,
             'createdAt' => $this->getCreatedAt()
         ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpdatedAt() {
+        return $this->updatedAt;
     }
 }

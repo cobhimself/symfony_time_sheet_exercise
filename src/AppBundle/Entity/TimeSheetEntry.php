@@ -14,8 +14,11 @@ use Symfony\Component\Validator\Constraints\Date;
  * @package AppBundle\Entity
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TimeSheetEntryRepository")
  * @ORM\Table(name="time_sheet_entry")
+ * @ORM\HasLifecycleCallbacks
  */
 class TimeSheetEntry {
+
+    use CreatedUpdatedTrait;
 
     /**
      * @ORM\Id
@@ -49,6 +52,11 @@ class TimeSheetEntry {
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
 
     /**
      * @return int
@@ -141,13 +149,41 @@ class TimeSheetEntry {
      */
     public function setDataFromRequest(Request $request, $timeSheet = null)
     {
-        $this->setDescription($request->query->get('description'));
-        $this->setHourlyPrice($request->query->get('hourlyPrice'));
-        $this->setHours($request->query->get('hours'));
+        $data = new \stdClass();
+        $data->description = $request->query->get('description');
+        $data->hourlyPrice = $request->query->get('hourlyPrice');
+        $data->hours = $request->query->get('hours');
 
         if (!is_null($timeSheet))
         {
-            $this->setTimeSheet($timeSheet);
+            $data->timesheet = $timeSheet;
+        }
+
+        $this->setData($data);
+
+        return $this;
+    }
+
+    /**
+     * Set the data on this TimeSheetEntry based on the attributes of
+     * the given object.
+     *
+     * @param \stdClass $object
+     *
+     * @return $this
+     */
+    public function setData(\stdClass $object) {
+        $this->setDescription($object->description);
+        $this->setHourlyPrice($object->hourlyPrice);
+        $this->setHours($object->hours);
+
+        if (property_exists($object, 'timesheet'))
+        {
+            if (!$object->timesheet instanceof TimeSheet) {
+                throw new \InvalidArgumentException('The timesheet property of the data sent is not a TimeSheetEntry!');
+            }
+
+            $this->setTimeSheet($object->timesheet);
         }
 
         return $this;
@@ -167,5 +203,12 @@ class TimeSheetEntry {
         ];
 
         return $data;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpdatedAt() {
+        return $this->updatedAt;
     }
 }
