@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Api;
 
 use AppBundle\Api\ApiProblem;
 use AppBundle\Entity\TimeSheet;
+use AppBundle\Entity\TimeSheetEntry;
 use Doctrine\DBAL\Logging\DebugStack;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -84,12 +85,57 @@ class ApiController extends ApiBaseController
      *
      * @return Response
      */
-    public function putTimeSheetEntry(Request $request) {
+    public function postTimeSheetEntry(Request $request) {
         $data = $this->getDecodedJsonFromRequest($request);
+
+        $newEntries = array();
+
+        $em = $this->getDoctrine()->getManager();
+
+        //We need to get an array of TimeSheets stored by
+        //their id so we can associate them in one go with
+        //the given entries.
+        $idsToGet = [];
+        foreach($data as $row) {
+            $idsToGet[] = $row->timeSheetId;
+        }
+
+        $timesheets = $em->getRepository('AppBundle:TimeSheet')
+            ->findBy(['id' => $idsToGet]);
+
+        $byId = [];
+
+        foreach ($timesheets as $timesheet) {
+            $byId[$timesheet->getId()] = $timesheet;
+        }
+
+        $timesheets = $byId;
+
+        foreach ($data as $row) {
+            /**
+             * @type TimeSheetEntry
+             */
+            $entry = new TimeSheetEntry();
+            $row->timesheet = $timesheets[$row->timeSheetId];
+            $entry->setData($row);
+            $em->persist($entry);
+            $newEntries[] = $entry;
+        }
+
+        $em->flush();
+
+        //Create new data now that we can get the ids of the new time sheets.
+        $data = [];
+
+        foreach ($newEntries as $entry) {
+            $data[] = $entry->serialize();
+        }
+
+        return $this->jsonResponse($data, 201);
     }
 
     /**
-     * POST one or more new time sheet entries.
+     * POST one or more new time sheets
      *
      * @Route("/api/timesheet", name="api_post_timesheet")
      * @Method("POST")
