@@ -31,15 +31,25 @@ Feature: Api access
     Given I have the following data:
     | bill to                                                 |
     | 85289 Daniel Gardens Suite 775 Margarettatown, IA 64118 |
+    | 20123 Monkey Face Suite 775 Lewisville, IA 64118        |
     And I request "POST /api/timesheet"
-    And I use the first returned time sheet in the response
     Then the response status code should be 201
+    And I should have a list of data
+    And the list should contain 2 entries
+    And regarding item 1 returned in the response
     And an "id" property should exist
+    And a "created at" property should exist
     And a "bill to" property should equal:
     """
     85289 Daniel Gardens Suite 775 Margarettatown, IA 64118
     """
+    And regarding item 2 returned in the response
     And a "created at" property should exist
+    And an "id" property should exist
+    And a "bill to" property should equal:
+    """
+    20123 Monkey Face Suite 775 Lewisville, IA 64118
+    """
 
   Scenario: POST invalid time sheet data
     Given I have invalid json data
