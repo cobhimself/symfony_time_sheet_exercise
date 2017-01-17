@@ -196,7 +196,7 @@ class TimeSheetEntry {
         $data = [
             'id' => $this->getId(),
             'timeSheetId' => $this->getTimeSheet()->getId(),
-            'createdAt' => $this->getCreatedAt(),
+            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
             'description' => $this->getDescription(),
             'hourlyPrice' => $this->getHourlyPrice(),
             'hours' => $this->getHours()

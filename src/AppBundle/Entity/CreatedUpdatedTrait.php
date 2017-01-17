@@ -15,17 +15,18 @@ trait CreatedUpdatedTrait {
     /**
      * @ORM\PrePersist()
      */
-    public function setCreatedAtPrePersist() {
+    public function setCreatedAndUpdatedAtPrePersist() {
         if (property_exists(self::class, 'createdAt')) {
             $this->createdAt = new \DateTime('now');
         }
+        $this->setUpdatedAtPreUpdateAndPersist();
     }
 
     /**
      * @ORM\PreUpdate()
      * @ORM\PrePersist()
      */
-    public function setUpdatedAtPrePersist() {
+    public function setUpdatedAtPreUpdateAndPersist() {
         if (property_exists(self::class, 'updatedAt')) {
             $this->updatedAt = new \DateTime('now');
         }
