@@ -8,7 +8,7 @@ class EntryRow extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
     componentWillMount() {
-        //Set the save/cancel buttons to be hidden.
+        //Set the save/cancel buttons to be hidden initially.
         this.setState({
             amEditing: false,
             saveButtonDisplay: 'none',
@@ -20,12 +20,24 @@ class EntryRow extends Component {
     get(key) {
         return this.props.data[key];
     }
-    handleChange() {
-        
+    handleChange(event) {
+        //TODO!!!
     }
+
+    /**
+     * Add up the total for this entry row.
+     *
+     * @return {number}
+     */
     getTotal() {
         return Math.fround(this.get('hourlyPrice') * this.get('hours'));
     }
+
+    /**
+     * Set the entry row as being edited or not.
+     *
+     * @param {boolean} flag True to go in edit mode, false otherwise.
+     */
     setEditing(flag) {
         this.setState({
             amEditing: flag,
@@ -36,27 +48,69 @@ class EntryRow extends Component {
         });
         console.log(this.state);
     }
+
+    /**
+     * Save the data from the entry row.
+     *
+     * @param event
+     */
     doSave(event) {
         console.log('saving ', event);
     }
+
+    /**
+     * Set the entry row as editing.
+     *
+     * @param event
+     */
     doEdit(event) {
         this.setEditing(true);
     }
+
+    /**
+     * Cancel the edit for this entry row.
+     *
+     * @param event
+     */
     doCancel(event) {
         this.setEditing(false);
     }
+
+    /**
+     * Perform the deletion of the entry row.
+     *
+     * @param event
+     */
     doDelete(event) {
         console.log('deleting ', event);
     }
+
+    /**
+     * Get the display value for the input fields.
+     *
+     * @return {{display: string}}
+     */
     getInputDisplay() {
         var val = (this.state.amEditing) ? '' : 'none';
         console.log('input display: ', val);
        return {display: val};
     }
+
+    /**
+     * Get the display value of the value data.
+     *
+     * @return {{display: string}}
+     */
     getValueDisplay() {
         var val = (this.state.amEditing) ? 'none' : '';
         return {display: val};
     }
+
+    /**
+     * Render!
+     *
+     * @return {*}
+     */
     render() {
         if (!this.props.data) {
             return '';
