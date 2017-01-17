@@ -1,10 +1,10 @@
 import 'whatwg-fetch'
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EntryTable from './TimeSheet/EntryTable.jsx';
-import EntryRow from './TimeSheet/EntryRow.jsx';
+import TimeSheet from './TimeSheet/TimeSheet.jsx';
 
+window.onLoad
 ReactDOM.render(
-    <EntryTable />,
+    <TimeSheet />,
     document.getElementById('root')
 );

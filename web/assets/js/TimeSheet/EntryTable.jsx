@@ -4,10 +4,22 @@ import EntryRow from './EntryRow.jsx';
 class EntryTable extends Component {
     constructor(props) {
         super(props);
+        console.log('Constructing EntryTable. Props:', props);
 
-    }
-    componentDidMount() {
-        this.getTimeSheetData()
+        var entry,
+            entries = this.props.entries,
+            rows = [];
+        for (entry in entries) {
+            if (entries.hasOwnProperty(entry)) {
+                console.log('New Entry Row Data:', entries[entry]);
+                rows.push(<EntryRow key={entries[entry].id} data={entries[entry]} />);
+            }
+        }
+        console.log('EntryTable final rows:', rows);
+
+        this.state = {
+            rows: rows
+        }
     }
     render() {
         return (<table id="timeEntryTable" className="table table-striped table-hover">
@@ -21,7 +33,7 @@ class EntryTable extends Component {
             </tr>
             </thead>
             <tbody>
-                <EntryRow />
+                {this.state.rows}
             </tbody>
         </table>);
     }
@@ -33,22 +45,6 @@ class EntryTable extends Component {
             error.response = response
             throw error
         }
-    }
-    parseJSON(response) {
-        return response.json()
-    }
-    getTimeSheetData() {
-        fetch('/api/timesheet', {
-            method: "GET",
-            credentials: "same-origin"
-        })
-        .then(this.checkStatus)
-        .then(this.parseJSON)
-        .then(function (data) {
-            console.log(data);
-        }).catch(function (error) {
-            console.log('request failed', error);
-        });
     }
 }
 
