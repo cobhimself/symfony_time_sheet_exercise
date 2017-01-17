@@ -166,6 +166,34 @@ class FeatureContext extends MinkContext implements Context {
     }
 
     /**
+     * @Then the list should contain more than one item
+     */
+    public function theListShouldContainMoreThanOneItem()
+    {
+        $data = $this->getObjectFromJson();
+        Assert::assertGreaterThan(1, count($data), 'The list does not have more than one item!');
+    }
+
+    /**
+     * @Then the :key data should be a list
+     */
+    public function theDataShouldBeAList($key)
+    {
+        $data = $this->getObjectFromJson();
+        Assert::assertTrue(is_array($data->$key), $key.' data is not an array! Data:'.var_export($data->$key, true));
+        Assert::assertObjectHasAttribute($key, $data, 'The data returned does not have a '.$key.' key. Data:'.var_export($data, true));
+    }
+
+    /**
+     * @Then the :key data should contain more than one item
+     */
+    public function theDataShouldContainMoreThanOneItem($key)
+    {
+        $data = $this->getObjectFromJson();
+        Assert::assertTrue(count($data->$key) > 1, 'The '.$key.' data does not contain more than one item.'.var_export($data->$key, true));
+    }
+
+    /**
      * @Then the data should be empty
      */
     public function theDataShouldBeEmpty() {
@@ -299,5 +327,13 @@ class FeatureContext extends MinkContext implements Context {
         }
 
         return $actual;
+    }
+
+    /**
+     * @Then I die
+     */
+    public function iDie()
+    {
+        die;
     }
 }

@@ -23,6 +23,7 @@ Feature: Timesheet Entry Api access
     Given I request "GET /api/timesheet/entry"
     Then the response status code should be 200
     And I should have a list of data
+    And the list should contain more than one item
     And the data should have values for the following:
     """
     id

@@ -20,6 +20,10 @@ Feature: Api access
     Given I request "GET /api/timesheet"
     Then the response status code should be 200
     And I should have a list of data
+    And the list should contain more than one item
+    And regarding item 1 returned in the response
+    Then the "entries" data should be a list
+    And the "entries" data should contain more than one item
     And the data should have values for the following:
     """
     id

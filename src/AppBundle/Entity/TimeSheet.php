@@ -125,15 +125,16 @@ class TimeSheet {
 
     public function serialize() {
         $entryData = array();
+
         foreach ($this->getEntries() as $entry) {
-            $entryData = $entry->serialize();
+            $entryData[] = $entry->serialize();
         }
 
         return  [
             'id' => $this->getId(),
             'billTo' => $this->getBillTo(),
             'entries' => $entryData,
-            'createdAt' => $this->getCreatedAt()
+            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s')
         ];
     }
 

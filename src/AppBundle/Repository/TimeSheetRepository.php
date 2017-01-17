@@ -19,7 +19,7 @@ class TimeSheetRepository extends EntityRepository {
 
         $result = $this->createQueryBuilder('timesheet')
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getFirstResult();
 
         if (!$result) {
             //Our default timesheet does not exist. Create it.
