@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\Date;
  * @ORM\Table(name="time_sheet_entry")
  * @ORM\HasLifecycleCallbacks
  */
-class TimeSheetEntry {
+class TimeSheetEntry extends BaseEntity {
 
     use CreatedUpdatedTrait;
 
@@ -139,32 +139,6 @@ class TimeSheetEntry {
     }
 
     /**
-     * Set data from the request.
-     *
-     * @param Request $request
-     * @param TimeSheet|null $timeSheet The time sheet this entry belongs to.
-     *                                  If null, no time sheet is set for this
-     *                                  entry (useful for when updating).
-     *  @return TimeSheetEntry
-     */
-    public function setDataFromRequest(Request $request, $timeSheet = null)
-    {
-        $data = new \stdClass();
-        $data->description = $request->query->get('description');
-        $data->hourlyPrice = $request->query->get('hourlyPrice');
-        $data->hours = $request->query->get('hours');
-
-        if (!is_null($timeSheet))
-        {
-            $data->timesheet = $timeSheet;
-        }
-
-        $this->setData($data);
-
-        return $this;
-    }
-
-    /**
      * Set the data on this TimeSheetEntry based on the attributes of
      * the given object.
      *
@@ -210,5 +184,14 @@ class TimeSheetEntry {
      */
     public function getUpdatedAt() {
         return $this->updatedAt;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getMissingDataKeys($data) {
+        return parent::getMissingDataRequirements($data, [
+            'timeSheetId', 'description', 'hourlyPrice', 'hours'
+        ]);
     }
 }
