@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Api;
 
 use AppBundle\Api\ApiProblem;
+use AppBundle\Api\ApiProblemException;
 use AppBundle\Entity\TimeSheet;
 use AppBundle\Entity\TimeSheetEntry;
 use Doctrine\DBAL\Logging\DebugStack;
@@ -56,7 +57,7 @@ class ApiController extends ApiBaseController
      *
      * @return Response
      */
-    public function getTimeSheetEntryList(Request $request)
+    public function getTimeSheetEntryListAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $collection = $em->getRepository('AppBundle:TimeSheetEntry')
@@ -77,6 +78,30 @@ class ApiController extends ApiBaseController
     }
 
     /**
+     * DELETE a time sheet entry.
+     *
+     * @Route("/api/timesheet/entry")
+     * @Method("DELETE")
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function deleteTimeSheetEntryAction(Request $request) {
+        $data = $this->getDecodedJsonFromRequest($request);
+
+        if (!property_exists($data, 'id')) {
+            $this->problemResponse($this->getMissingDataProblem('id'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getReference('AppBundle:TimeSheetEntry', $data->id);
+        $em->remove($entity);
+        $em->flush();
+
+        return $this->jsonResponse('', 204);
+    }
+
+    /**
      * POST a new time sheet entry.
      *
      * @Route("/api/timesheet/entry", name="api_post_timesheet_entry")
@@ -85,18 +110,20 @@ class ApiController extends ApiBaseController
      *
      * @return Response
      */
-    public function postTimeSheetEntry(Request $request) {
+    public function postTimeSheetEntryAction(Request $request) {
         $data = $this->getDecodedJsonFromRequest($request);
 
         $newEntries = array();
 
         $em = $this->getDoctrine()->getManager();
 
+
         //We need to get an array of TimeSheets stored by
         //their id so we can associate them in one go with
         //the given entries.
         $idsToGet = [];
         foreach($data as $row) {
+            $this->assertDataMeetsRequirements('\AppBundle\Entity\TimeSheetEntry', $row);
             $idsToGet[] = $row->timeSheetId;
         }
 
@@ -115,10 +142,14 @@ class ApiController extends ApiBaseController
             /**
              * @type TimeSheetEntry
              */
-            $entry = new TimeSheetEntry();
+            if (isset($row->id)) {
+                $entry = $em->getReference('AppBundle\Entity\TimeSheetEntry', $row->id);
+            } else {
+                $entry = new TimeSheetEntry();
+            }
             $row->timesheet = $timesheets[$row->timeSheetId];
             $entry->setData($row);
-            $em->persist($entry);
+            $entry = $em->merge($entry);
             $newEntries[] = $entry;
         }
 
@@ -143,7 +174,7 @@ class ApiController extends ApiBaseController
      *
      * @return Response
      */
-    public function postTimeSheet(Request $request) {
+    public function postTimeSheetAction(Request $request) {
 
         $data = $this->getDecodedJsonFromRequest($request);
 
@@ -151,6 +182,7 @@ class ApiController extends ApiBaseController
         $em = $this->getDoctrine()->getManager();
 
         foreach ($data as $row) {
+            $this->assertDataMeetsRequirements('\AppBundle\Entity\TimeSheet', $row);
             $timeSheet = new TimeSheet();
             $timeSheet->setBillTo($row->billTo);
             $em->persist($timeSheet);
@@ -209,7 +241,7 @@ class ApiController extends ApiBaseController
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getTimeSheetList(Request $request)
+    public function getTimeSheetListAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $collection = $em->getRepository('AppBundle:TimeSheet')
@@ -227,5 +259,4 @@ class ApiController extends ApiBaseController
 
         return $this->jsonResponse($data, $status);
     }
-
 }
