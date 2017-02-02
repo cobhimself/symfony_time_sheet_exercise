@@ -1,8 +1,10 @@
-var webpack = require('webpack');
+var webpack = require('webpack'),
+    path = require('path');
 
 module.exports = {
     entry: [
-        './web/assets/js/app.js'
+        './web/assets/js/app.js',
+        './web/assets/sass/styles.sass'
     ],
     module: {
         loaders: [
@@ -13,8 +15,15 @@ module.exports = {
                 query: {
                     presets: ['es2015', 'react']
                 }
+            }, {
+                test: /\.sass$/,
+                loaders: ['style-loader', 'css-loader', 'sass-loader']
             }
+
         ]
+    },
+    sassLoader: {
+        includePaths: [path.resolve(__dirname, "web/assets/sass")]
     },
     output: {
         filename: 'app.js',
