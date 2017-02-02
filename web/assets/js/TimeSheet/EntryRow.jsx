@@ -15,13 +15,20 @@ class EntryRow extends Component {
             cancelButtonDisplay: 'none',
             editButtonDisplay: '',
             deleteButtonDisplay: '',
+            data: this.props.data
         })
     }
     get(key) {
-        return this.props.data[key];
+        return this.state.data[key];
     }
-    handleChange(event) {
-        //TODO!!!
+    handleChange(key, event) {
+        var newVal = event.target.value;
+        this.setState(function (prevState, props){
+            var data = prevState.data;
+            data[key] = newVal;
+
+            return data;
+        });
     }
 
     /**
@@ -49,6 +56,25 @@ class EntryRow extends Component {
         console.log(this.state);
     }
 
+    checkStatus(response) {
+
+        if (response.status >= 200 && response.status < 300) {
+            return response
+        } else {
+            let json;
+                return response.json().then(function (json) {
+                    let error = new Error(response.statusText);
+                    error.jsonResponse = json;
+                    error.response = response
+                    throw error
+                });
+        }
+    }
+
+    parseJSON(response) {
+        return response.json()
+    }
+
     /**
      * Save the data from the entry row.
      *
@@ -56,6 +82,35 @@ class EntryRow extends Component {
      */
     doSave(event) {
         console.log('saving ', event);
+        var that = this;
+
+        fetch('/api/timesheet/entry', {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify([this.state.data])
+        })
+            .then(this.checkStatus)
+            .then(this.parseJSON)
+            .then(function (data) {
+                //Posting new data returns the data for us again.
+                console.log('TimeSheet data loaded. Setting state:', data[0]);
+                var data = data[0];
+                that.setState({
+                    billTo: data.billTo,
+                    entries: data.entries
+                });
+                that.setEditing(false);
+                console.log('TimeSheet data done loading.');
+            })
+            .catch(function (error) {
+                console.log('request failed', error);
+                if (error.jsonResponse) {
+                    console.log('jsonResponse', error.jsonResponse);
+                }
+            });
     }
 
     /**
@@ -83,6 +138,28 @@ class EntryRow extends Component {
      */
     doDelete(event) {
         console.log('deleting ', event);
+        console.log({'id': this.state.data.id});
+        var that = this;
+
+        fetch('/api/timesheet/entry', {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'id': this.state.data.id})
+        })
+            .then(this.checkStatus)
+            .then(function (response) {
+                console.log(response);
+                console.log('Deleted!');
+            })
+            .catch(function (error) {
+                console.log('request failed', error);
+                if (error.jsonResponse) {
+                    console.log('jsonResponse', error.jsonResponse);
+                }
+            });
     }
 
     /**
@@ -116,16 +193,16 @@ class EntryRow extends Component {
             return '';
         }
         return (<tr className="js-existing-entry" id={"entry_" + this.get('id')}>
-            <td className="js-entry-description">
-                <input type="text" onChange={this.handleChange} value={this.get('description')} style={this.getInputDisplay()} />
+            <td className="js-entry-description form-group">
+                <input className="form-control" type="text" onChange={this.handleChange.bind(this, 'description')} value={this.get('description')} style={this.getInputDisplay()} />
                 <span style={this.getValueDisplay()}>{this.get('description')}</span>
             </td>
-            <td className="js-entry-hourlyPrice">
-                <input type="text" onChange={this.handleChange} value={this.get('hourlyPrice')} style={this.getInputDisplay()} />
+            <td className="js-entry-hourlyPrice form-group">
+                <input type="text" className="form-control" size="4" onChange={this.handleChange.bind(this, 'hourlyPrice')} value={this.get('hourlyPrice')} style={this.getInputDisplay()} />
                 <span style={this.getValueDisplay()}>{this.get('hourlyPrice')}</span>
             </td>
-            <td className="js-entry-hours">
-                <input type="text" onChange={this.handleChange} value={this.get('hours')} style={this.getInputDisplay()} />
+            <td className="js-entry-hours form-group">
+                <input type="text" className="form-control" size="4" onChange={this.handleChange.bind(this, 'hours')} value={this.get('hours')} style={this.getInputDisplay()} />
                 <span style={this.getValueDisplay()}>{this.get('hours')}</span>
             </td>
             <td className="js-entry-total row-total">{this.getTotal()}</td>

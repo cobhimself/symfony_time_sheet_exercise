@@ -7,7 +7,8 @@ class TimeSheet extends Component {
         super(props);
         this.state = {
             billTo: '',
-            entries: []
+            entries: [],
+            id: null
         };
         this.handleChange = this.handleChange.bind(this);
     }
@@ -46,7 +47,7 @@ class TimeSheet extends Component {
                 </div>
             </div>
             <div className="row">
-                <EntryTable entries={this.state.entries}/>
+                <EntryTable timeSheetId={this.state.id} entries={this.state.entries}/>
             </div>
             <div className="row btn-bar">
                 <div className="pull-right">
@@ -85,7 +86,8 @@ class TimeSheet extends Component {
                 var data = data[0];
                 that.setState({
                     billTo: data.billTo,
-                    entries: data.entries
+                    entries: data.entries,
+                    id: data.id
                 });
                 console.log('TimeSheet data done loading.');
             }).catch(function (error) {

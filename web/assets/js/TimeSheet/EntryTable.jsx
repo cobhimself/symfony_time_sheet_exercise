@@ -8,11 +8,15 @@ class EntryTable extends Component {
 
         var entry,
             entries = this.props.entries,
+            data,
+            timeSheetId = this.props.timeSheetId,
             rows = [];
         for (entry in entries) {
             if (entries.hasOwnProperty(entry)) {
-                console.log('New Entry Row Data:', entries[entry]);
-                rows.push(<EntryRow key={entries[entry].id} data={entries[entry]} />);
+                data = entries[entry];
+                data.timeSheetId = this.props.timeSheetId;
+                console.log('New Entry Row Data:', data);
+                rows.push(<EntryRow key={entries[entry].id} data={data}/>);
             }
         }
         console.log('EntryTable final rows:', rows);
@@ -22,20 +26,20 @@ class EntryTable extends Component {
         }
     }
     render() {
-        return (<table id="timeEntryTable" className="table table-striped table-hover">
+        return (<form><table id="timeEntryTable" className="table table-striped table-hover">
             <thead>
             <tr>
                 <th className="description-col">Description</th>
-                <th>Hourly Price</th>
-                <th>Hours</th>
-                <th>Total</th>
-                <th></th>
+                <th className="hourly-column">Hourly Price</th>
+                <th className="hours-column">Hours</th>
+                <th className="total-column">Total</th>
+                <th className="action-column"></th>
             </tr>
             </thead>
             <tbody>
                 {this.state.rows}
             </tbody>
-        </table>);
+        </table></form>);
     }
     checkStatus(response) {
         if (response.status >= 200 && response.status < 300) {
