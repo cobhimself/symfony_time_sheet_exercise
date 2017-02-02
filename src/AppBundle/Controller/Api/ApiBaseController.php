@@ -36,6 +36,13 @@ abstract class ApiBaseController extends Controller {
         return $problem;
     }
 
+    protected function getMissingDataProblem($missing) {
+        $problem = new ApiProblem(422, ApiProblem::TYPE_MISSING_DATA);
+        $problem->set('missing', $missing);
+
+        return $problem;
+    }
+
     /**
      * Send the given problem as a response.
      *
@@ -62,5 +69,18 @@ abstract class ApiBaseController extends Controller {
         }
 
         return $data;
+    }
+
+    /**
+     * Verify the given data meets the requirements for the given class.
+     *
+     * @param String $class The class name.
+     * @param stdClass|array $data
+     */
+    protected function assertDataMeetsRequirements($class, $data) {
+        $missing = $class::getMissingDataKeys($data);
+        if (!empty($missing)) {
+            throw new ApiProblemException($this->getMissingDataProblem($missing));
+        }
     }
 }
