@@ -55,6 +55,17 @@ Feature: Api access
     20123 Monkey Face Suite 775 Lewisville, IA 64118
     """
 
+  Scenario: POST time sheet data with missing properties
+    Given I have the following data:
+    |bill to data           |
+    |bad property name value|
+    And I request "POST /api/timesheet"
+    Then the response status code should be 422
+    And the content type should be "application/problem+json"
+    And a "title" property should equal "You are missing data!"
+    And a "type" property should equal "missing_data"
+    And a "missing" property should exist
+
   Scenario: POST invalid time sheet data
     Given I have invalid json data
     And I request "POST /api/timesheet"

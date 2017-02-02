@@ -65,3 +65,20 @@ Feature: Timesheet Entry Api access
     And the content type should be "application/problem+json"
     And a "title" property should equal "The JSON that was sent is invalid!"
     And a "type" property should equal "invalid_body_format"
+
+  Scenario: POST time sheet entry data with missing properties
+    Given I have the following data:
+      | hours | description        |
+      | 4.5   | My description     |
+    And I request "POST /api/timesheet/entry"
+    Then the response status code should be 422
+    And the content type should be "application/problem+json"
+    And a "title" property should equal "You are missing data!"
+    And a "type" property should equal "missing_data"
+    And a "missing" property should exist
+
+  Scenario: DELETE time sheet entry
+    Given I set data using an existing "time sheet entry" id
+    And I request "DELETE /api/timesheet/entry"
+    Then the response status code should be 204
+    And a "time sheet entry" with the original id should not exist
