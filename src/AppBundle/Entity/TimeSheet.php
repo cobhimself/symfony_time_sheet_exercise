@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @ORM\Table(name="time_sheet")
  * @ORM\HasLifecycleCallbacks()
  */
-class TimeSheet {
+class TimeSheet extends BaseEntity {
 
     use CreatedUpdatedTrait;
 
@@ -123,6 +123,11 @@ class TimeSheet {
         return $this;
     }
 
+    /**
+     * Serialize the TimeSheet entity.
+     *
+     * @return array
+     */
     public function serialize() {
         $entryData = array();
 
@@ -143,5 +148,12 @@ class TimeSheet {
      */
     public function getUpdatedAt() {
         return $this->updatedAt;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getMissingDataKeys($data) {
+        return parent::getMissingDataRequirements($data, ['billTo']);
     }
 }
