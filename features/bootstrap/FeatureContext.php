@@ -25,6 +25,13 @@ class FeatureContext extends MinkContext implements Context {
     private $jsonData;
     private $postData;
     private $useBadData = false;
+    private $entityIdToDelete;
+
+    const acceptableNames = [
+        'time sheet entry' => 'TimeSheetEntry',
+        'time sheet' => 'TimeSheet'
+    ];
+
 
     /**
      * Initializes context.
@@ -65,7 +72,7 @@ class FeatureContext extends MinkContext implements Context {
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager
+     * @return \Doctrine\ORM\EntityManager
      */
     private function getEntityManager() {
         return $this->getContainer()->get('doctrine')->getManager();
@@ -80,7 +87,7 @@ class FeatureContext extends MinkContext implements Context {
     public function iRequest($method, $uri) {
         $data = array();
 
-        if ($method === 'POST') {
+        if (in_array($method, ['POST', 'DELETE'])) {
             if (!$this->postData) {
                 throw new Exception('Cannot send post data when it is not set!');
             }
@@ -327,6 +334,62 @@ class FeatureContext extends MinkContext implements Context {
         }
 
         return $actual;
+    }
+
+    /**
+     * Return the entity class name based upon the given human-readable entity name.
+     *
+     * @param String $entityName
+     * @return String
+     */
+    private function _getEntityByHumanReadableName($entityName) {
+        $acceptableNames = self::acceptableNames;
+
+        if (!array_key_exists($entityName, $acceptableNames)) {
+            throw new InvalidArgumentException('The given entity name "'.$entityName.'" is not a valid name! Try one of:'.join(',', $acceptableNames));
+        }
+
+        return self::acceptableNames[$entityName];
+    }
+
+    /**
+     * @Given I set data using an existing :entityName id
+     *
+     * @param String $entityName The human-readable name of our entities
+     */
+    public function iSetDataUsingAnExistingId($entityName)
+    {
+
+        $entity = $this->getEntityManager()
+            ->getRepository('AppBundle:'.$this->_getEntityByHumanReadableName($entityName))
+            ->findFirstResult();
+
+        Assert::assertNotNull($entity, 'No '.$entityName.' exists to get!');
+
+        $this->entityIdToDelete = $entity->getId();
+
+        $data = ['id' => $this->entityIdToDelete];
+
+        $this->postData = $data;
+    }
+
+    /**
+     * @Then a :entityName with the original id should not exist
+     *
+     * @param String $entityName The human-readable entity name.
+     */
+    public function aWithTheOriginalIdShouldNotExist($entityName)
+    {
+        $entity = $this->getEntityManager()->createQuery('
+            SELECT e
+            FROM AppBundle:?
+            WHERE e.id = ?
+        ')
+        ->setParameter(0, $this->_getEntityByHumanReadableName($entityName))
+        ->setParameter(1, $this->entityIdToDelete)
+        ->getFirstResult();
+
+        Assert::assertNull($entity, 'The entity with id '.$this->entityIdToDelete.' still exists!');
     }
 
     /**
