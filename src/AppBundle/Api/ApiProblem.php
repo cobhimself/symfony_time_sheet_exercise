@@ -16,9 +16,11 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class ApiProblem {
 
     const TYPE_INVALID_BODY = 'invalid_body_format';
+    const TYPE_MISSING_DATA = 'missing_data';
 
     private static $titles = array(
-        self::TYPE_INVALID_BODY => 'The JSON that was sent is invalid!'
+        self::TYPE_INVALID_BODY => 'The JSON that was sent is invalid!',
+        self::TYPE_MISSING_DATA => 'You are missing data!'
     );
 
     private $title;
@@ -40,9 +42,6 @@ class ApiProblem {
         $this->title = self::$titles[$type];
     }
 
-    /**
-     * @return string
-     */
     public function getTitle() {
         return $this->title;
     }
