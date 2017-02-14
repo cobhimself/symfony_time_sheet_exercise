@@ -148,7 +148,11 @@ class EntryRow extends Component {
      * @param event
      */
     doCancel(event) {
-        this.setEditing(false);
+        if (this.state.type === 'existing') {
+            this.setEditing(false);
+        } else {
+            this.clearInputs();
+        }
     }
 
     /**
