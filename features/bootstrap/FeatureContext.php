@@ -219,11 +219,11 @@ class FeatureContext extends MinkContext implements Context {
     }
 
     /**
-     * @Then the list should contain :arg1 entries
+     * @Then the list should contain :num entries
      */
-    public function theListContainsEntries($arg1)
+    public function theListContainsEntries($num)
     {
-        Assert::assertEquals(2, count($this->getObjectFromJson()));
+        Assert::assertEquals($num, count($this->getObjectFromJson()));
     }
 
     /**
