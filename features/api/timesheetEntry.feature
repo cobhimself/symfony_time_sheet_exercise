@@ -58,6 +58,22 @@ Feature: Timesheet Entry Api access
     And an "hourly price" property should equal "3"
     And a "created at" property should exist
 
+  Scenario: POST new time sheet entry data
+    Given I have the following data:
+      | time sheet id | hours | description        | hourly price |
+      | 1             | 4.7   | My new description | 8.5          |
+    And I request "POST /api/timesheet/entry"
+    Then the response status code should be 201
+    And I should have a list of data
+    And the list should contain 1 entries
+    And regarding item 1 returned in the response
+    And an "id" property should exist
+    And a "time sheet id" property should equal 1
+    And an "hours" property should equal "4.7"
+    And a "description" property should equal "My new description"
+    And an "hourly price" property should equal "8.5"
+    And a "created at" property should exist
+
   Scenario: POST invalid time sheet entry data
     Given I have invalid json data
     And I request "POST /api/timesheet/entry"
