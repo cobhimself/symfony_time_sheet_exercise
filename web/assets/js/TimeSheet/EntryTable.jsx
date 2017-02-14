@@ -26,16 +26,33 @@ class EntryTable extends Component {
         }
     }
     compileEntryRow(key, data, type) {
-        return (<EntryRow key={key} data={data} type={type}/>);
+        return (<EntryRow key={key} data={data} type={type} afterDelete={this.afterDelete.bind(this)}/>);
     }
     afterAdd(data) {
         this.setState(function (prevState, props){
-            console.log('Prev State: ', prevState);
             var rows = prevState.rows;
             rows[rows.length] = this.compileEntryRow(data.id, data, 'existing');
 
             prevState.rows = rows;
             return prevState;
+        });
+    }
+    afterDelete(id) {
+        this.setState(function (prevState, props) {
+            var i, toDelete, rows = prevState.rows;
+            for (i = rows.length; i--;) {
+                if (rows.hasOwnProperty(i)) {
+                    if (rows[i].props.data.id === id) {
+                        console.log('Matching row: ', rows);
+                        toDelete = i;
+                        break;
+                    }
+                }
+            }
+
+            prevState.rows.splice(toDelete, 1);
+
+            return  prevState;
         });
     }
     render() {

@@ -6,6 +6,8 @@ class EntryRow extends Component {
         console.log('Constructing EntryRow');
         console.log(this.props);
         this.afterAdd = (this.props.afterAdd) ? this.props.afterAdd : () => {};
+        this.afterDelete = (this.props.afterDelete) ? this.props.afterDelete : () => {};
+        console.log(this.afterDelete);
         this.doSave = this.doSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
@@ -175,8 +177,8 @@ class EntryRow extends Component {
         })
             .then(this.checkStatus)
             .then(function (response) {
-                console.log(response);
-                console.log('Deleted!');
+                console.log(that.afterDelete);
+                that.afterDelete(that.get('id'));
             })
             .catch(function (error) {
                 console.log('request failed', error);
