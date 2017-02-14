@@ -102,7 +102,7 @@ class ApiController extends ApiBaseController
     }
 
     /**
-     * POST a new time sheet entry.
+     * POST new sheet entries or existing ones.
      *
      * @Route("/api/timesheet/entry", name="api_post_timesheet_entry")
      * @Method("POST")
