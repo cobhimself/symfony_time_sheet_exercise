@@ -37,7 +37,8 @@ class EntryRow extends Component {
      * @return {number}
      */
     getTotal() {
-        return Math.fround(this.get('hourlyPrice') * this.get('hours'));
+        //This silly looking rounding method helps JavaScript round more precisely
+        return Number(Math.round(this.get('hourlyPrice') * this.get('hours')+'e2')+'e-2');
     }
 
     /**
