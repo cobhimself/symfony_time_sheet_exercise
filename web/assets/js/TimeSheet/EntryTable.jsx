@@ -16,7 +16,7 @@ class EntryTable extends Component {
                 data = entries[entry];
                 data.timeSheetId = this.props.timeSheetId;
                 console.log('New Entry Row Data:', data);
-                rows.push(<EntryRow key={entries[entry].id} data={data}/>);
+                rows.push(this.compileEntryRow(entries[entry].id, data, 'existing'));
             }
         }
         console.log('EntryTable final rows:', rows);
@@ -24,6 +24,19 @@ class EntryTable extends Component {
         this.state = {
             rows: rows
         }
+    }
+    compileEntryRow(key, data, type) {
+        return (<EntryRow key={key} data={data} type={type}/>);
+    }
+    afterAdd(data) {
+        this.setState(function (prevState, props){
+            console.log('Prev State: ', prevState);
+            var rows = prevState.rows;
+            rows[rows.length] = this.compileEntryRow(data.id, data, 'existing');
+
+            prevState.rows = rows;
+            return prevState;
+        });
     }
     render() {
         return (<form><table id="timeEntryTable" className="table table-striped table-hover">
@@ -38,6 +51,7 @@ class EntryTable extends Component {
             </thead>
             <tbody>
                 {this.state.rows}
+                <EntryRow key="new" data={{timeSheetId: this.props.timeSheetId}} type="new" afterAdd={this.afterAdd.bind(this)}/>
             </tbody>
         </table></form>);
     }

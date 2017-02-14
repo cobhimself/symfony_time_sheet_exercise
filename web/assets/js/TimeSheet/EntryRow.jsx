@@ -4,18 +4,23 @@ class EntryRow extends Component {
     constructor(props) {
         super(props);
         console.log('Constructing EntryRow');
+        console.log(this.props);
+        this.afterAdd = (this.props.afterAdd) ? this.props.afterAdd : () => {};
         this.doSave = this.doSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     componentWillMount() {
         //Set the save/cancel buttons to be hidden initially.
         this.setState({
-            amEditing: false,
-            saveButtonDisplay: 'none',
-            cancelButtonDisplay: 'none',
+            amEditing: (this.props.type === 'new') ? true : false,
+            saveButtonDisplay: (this.props.type === 'existing') ? 'none' : '',
+            cancelButtonDisplay: (this.props.type === 'existing') ? 'none' : '',
             editButtonDisplay: '',
             deleteButtonDisplay: '',
-            data: this.props.data
+            data: this.props.data,
+            type: this.props.type,
+            className: (this.props.type === 'new') ? 'js-new-entry' : 'js-existing-entry',
+            entryIdString: (this.props.data.id) ? "entry_" + this.props.data.id : 'new'
         })
     }
     get(key) {
@@ -38,7 +43,9 @@ class EntryRow extends Component {
      */
     getTotal() {
         //This silly looking rounding method helps JavaScript round more precisely
-        return Number(Math.round(this.get('hourlyPrice') * this.get('hours')+'e2')+'e-2');
+        return (this.get('hourlyPrice') && this.get('hours'))
+            ? Number(Math.round(this.get('hourlyPrice') * this.get('hours')+'e2')+'e-2')
+            : 0;
     }
 
     /**
@@ -55,6 +62,17 @@ class EntryRow extends Component {
             deleteButtonDisplay: (flag) ? 'none' : ''
         });
         console.log(this.state);
+    }
+
+    clearInputs() {
+        console.log('current state: ', this.state);
+        this.setState(function (prevState, props) {
+            prevState.data.hourlyPrice = '';
+            prevState.data.hours = '';
+            prevState.data.description = '';
+
+            return prevState;
+        });
     }
 
     checkStatus(response) {
@@ -99,11 +117,12 @@ class EntryRow extends Component {
                 //Posting new data returns the data for us again.
                 console.log('TimeSheet data loaded. Setting state:', data[0]);
                 var data = data[0];
-                that.setState({
-                    billTo: data.billTo,
-                    entries: data.entries
-                });
-                that.setEditing(false);
+                if (that.state.type === 'new') {
+                    that.afterAdd(data);
+                    that.clearInputs();
+                } else {
+                    that.setEditing(false);
+                }
                 console.log('TimeSheet data done loading.');
             })
             .catch(function (error) {
@@ -170,7 +189,6 @@ class EntryRow extends Component {
      */
     getInputDisplay() {
         var val = (this.state.amEditing) ? '' : 'none';
-        console.log('input display: ', val);
        return {display: val};
     }
 
@@ -193,7 +211,7 @@ class EntryRow extends Component {
         if (!this.props.data) {
             return '';
         }
-        return (<tr className="js-existing-entry" id={"entry_" + this.get('id')}>
+        return (<tr className={this.state.className} id={this.state.entryIdString}>
             <td className="js-entry-description form-group">
                 <input className="form-control" type="text" onChange={this.handleChange.bind(this, 'description')} value={this.get('description')} style={this.getInputDisplay()} />
                 <span style={this.getValueDisplay()}>{this.get('description')}</span>
@@ -208,10 +226,16 @@ class EntryRow extends Component {
             </td>
             <td className="js-entry-total row-total">{this.getTotal()}</td>
             <td className="entry-controls">
-                <button type="button" className="js-entry-save btn btn-success" onClick={() => this.doSave(this.get('id'))} style={{display: this.state.saveButtonDisplay}}><i className="glyphicon glyphicon-floppy-disk"></i></button>
-                <button type="button" className="js-entry-cancel btn btn-danger" onClick={() => this.doCancel(this.get('id'))} style={{display: this.state.cancelButtonDisplay}}><i className="glyphicon glyphicon-ban-circle"></i></button>
-                <button type="button" className="js-entry-edit btn btn-primary" onClick={() => this.doEdit(this.get('id'))} style={{display: this.state.editButtonDisplay}}><i className="glyphicon glyphicon-edit"></i></button>
-                <button type="button" className="js-entry-delete btn btn-danger" onClick={() => this.doDelete(this.get('id'))} style={{display: this.state.deleteButtonDisplay}}><i className="glyphicon glyphicon-trash"></i></button>
+                    <span>
+                        <button type="button" className="js-entry-save btn btn-success" onClick={() => this.doSave(this.get('id'))} style={{display: this.state.saveButtonDisplay}}><i className="glyphicon glyphicon-floppy-disk"></i></button>
+                        <button type="button" className="js-entry-cancel btn btn-danger" onClick={() => this.doCancel(this.get('id'))} style={{display: this.state.cancelButtonDisplay}}><i className="glyphicon glyphicon-ban-circle"></i></button>
+                    </span>
+                {this.state.type === 'existing' &&
+                    <span>
+                        <button type="button" className="js-entry-edit btn btn-primary" onClick={() => this.doEdit(this.get('id'))} style={{display: this.state.editButtonDisplay}}><i className="glyphicon glyphicon-edit"></i></button>
+                        <button type="button" className="js-entry-delete btn btn-danger" onClick={() => this.doDelete(this.get('id'))} style={{display: this.state.deleteButtonDisplay}}><i className="glyphicon glyphicon-trash"></i></button>
+                    </span>
+                }
             </td>
         </tr>);
     }
