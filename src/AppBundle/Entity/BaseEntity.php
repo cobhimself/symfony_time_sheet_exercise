@@ -7,7 +7,7 @@ abstract class BaseEntity {
     /**
      * Return a list of required keys that do not exist in the given data.
      *
-     * @param stdClass|array $data
+     * @param \stdClass|array $data
      * @return array
      */
     abstract static function getMissingDataKeys($data);
@@ -15,7 +15,7 @@ abstract class BaseEntity {
     /**
      * Return an array of missing required keys in the given data.
      *
-     * @param stdClass|array $data Data to search for the required keys.
+     * @param \stdClass|array $data Data to search for the required keys.
      * @param array $required An array of keys that must exist in the data.
      *
      * @return array An array of keys that are missing in the data or an empty
@@ -27,7 +27,7 @@ abstract class BaseEntity {
 
         foreach ($required as $key) {
             $miss = null;
-            if ($data instanceof stdClass) {
+            if ($data instanceof \stdClass) {
                 if (!property_exists($data, $key)) {
                     $miss = $key;
                 }

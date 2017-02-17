@@ -31,9 +31,6 @@ class DefaultController extends Controller
         $timeSheet = $em->getRepository('AppBundle:TimeSheet')
             ->getDefaultOrNew();
 
-        //Get the time sheet entries
-        $entries = $timeSheet->getEntries();
-
         return $this->render('default/index.html.twig');
     }
 }

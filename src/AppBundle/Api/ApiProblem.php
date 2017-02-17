@@ -1,7 +1,6 @@
 <?php
 
 namespace AppBundle\Api;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 
 /**
@@ -68,7 +67,7 @@ class ApiProblem {
      * @return mixed
      */
     public function get($key) {
-        return $this->extraData;
+        return (isset($this->extraData[$key])) ? $this->extraData : null;
     }
 
     /**

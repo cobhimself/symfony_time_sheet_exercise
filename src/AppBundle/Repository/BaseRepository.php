@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityRepository;
 
 class BaseRepository extends EntityRepository {
     /**
-     * @return int
+     * @return null|object
      */
     public function findFirstResult() {
         return $this->findOneBy(array());

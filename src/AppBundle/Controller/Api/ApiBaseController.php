@@ -39,7 +39,7 @@ abstract class ApiBaseController extends Controller {
     /**
      * Get a Missing Data Problem.
      *
-     * @param array $missing An array of missing API keys.
+     * @param array|string $missing An array of missing API keys.
      *
      * @return ApiProblem
      */
@@ -88,7 +88,7 @@ abstract class ApiBaseController extends Controller {
      * Verify the given data meets the requirements for the given class.
      *
      * @param String $class The class name.
-     * @param stdClass|array $data
+     * @param \stdClass|array $data
      */
     protected function assertDataMeetsRequirements($class, $data) {
         $missing = $class::getMissingDataKeys($data);
