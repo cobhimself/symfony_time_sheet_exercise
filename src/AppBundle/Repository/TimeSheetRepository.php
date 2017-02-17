@@ -5,7 +5,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\TimeSheet;
 use Doctrine\ORM\EntityRepository;
 
-class TimeSheetRepository extends EntityRepository {
+class TimeSheetRepository extends BaseRepository {
 
     /**
      * Get the default time sheet or generate a new one.
@@ -17,9 +17,7 @@ class TimeSheetRepository extends EntityRepository {
      */
     public function getDefaultOrNew() {
 
-        $result = $this->createQueryBuilder('timesheet')
-            ->getQuery()
-            ->getOneOrNullResult();
+        $result = $this->findFirstResult();
 
         if (!$result) {
             //Our default timesheet does not exist. Create it.

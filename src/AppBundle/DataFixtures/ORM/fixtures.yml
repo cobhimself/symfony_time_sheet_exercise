@@ -1,5 +1,5 @@
 AppBundle\Entity\TimeSheet:
-  timesheet_1:
+  timesheet_{1..4}:
     id: 1
     createdAt: <dateTimeBetween('-10 minutes', 'now')>
     billTo: <address()>

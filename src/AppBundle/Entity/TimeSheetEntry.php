@@ -14,8 +14,11 @@ use Symfony\Component\Validator\Constraints\Date;
  * @package AppBundle\Entity
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TimeSheetEntryRepository")
  * @ORM\Table(name="time_sheet_entry")
+ * @ORM\HasLifecycleCallbacks
  */
-class TimeSheetEntry {
+class TimeSheetEntry extends BaseEntity {
+
+    use CreatedUpdatedTrait;
 
     /**
      * @ORM\Id
@@ -49,6 +52,11 @@ class TimeSheetEntry {
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
 
     /**
      * @return int
@@ -131,26 +139,59 @@ class TimeSheetEntry {
     }
 
     /**
-     * Set data from the request.
+     * Set the data on this TimeSheetEntry based on the attributes of
+     * the given object.
      *
-     * @param Request $request
-     * @param TimeSheet|null $timeSheet The time sheet this entry belongs to.
-     *                                  If null, no time sheet is set for this
-     *                                  entry (useful for when updating).
-     *  @return TimeSheetEntry
+     * @param \stdClass $object
+     *
+     * @return $this
      */
-    public function setDataFromRequest(Request $request, $timeSheet = null)
-    {
-        $this->setDescription($request->query->get('description'));
-        $this->setHourlyPrice($request->query->get('hourlyPrice'));
-        $this->setHours($request->query->get('hours'));
+    public function setData(\stdClass $object) {
+        $this->setDescription($object->description);
+        $this->setHourlyPrice($object->hourlyPrice);
+        $this->setHours($object->hours);
 
-        if (!is_null($timeSheet))
+        if (property_exists($object, 'timesheet'))
         {
-            $this->setTimeSheet($timeSheet);
+            if (!$object->timesheet instanceof TimeSheet) {
+                throw new \InvalidArgumentException('The timesheet property of the data sent is not a TimeSheetEntry!');
+            }
+
+            $this->setTimeSheet($object->timesheet);
         }
 
         return $this;
     }
 
+    /**
+     * Return an array of data for this timesheet.
+     */
+    public function serialize() {
+        $data = [
+            'id' => $this->getId(),
+            'timeSheetId' => $this->getTimeSheet()->getId(),
+            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'description' => $this->getDescription(),
+            'hourlyPrice' => $this->getHourlyPrice(),
+            'hours' => $this->getHours()
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUpdatedAt() {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getMissingDataKeys($data) {
+        return parent::getMissingDataRequirements($data, [
+            'timeSheetId', 'description', 'hourlyPrice', 'hours'
+        ]);
+    }
 }

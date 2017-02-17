@@ -5,6 +5,12 @@
   text-transform: uppercase
   text-align: right
   font-weight: bold
+  font-size: 20px
+
+.timesheet-total
+  font-weight: bold
+  text-align: center
+  font-size: 20px
 
 #total_row > td
   border: none
@@ -20,6 +26,8 @@
   & > thead > tr
     background-color: #2e6da4
     color: #fff
+    th
+      text-align: center
 
   .row-total
     background-color: lighten(#2e6da4, 50)
@@ -31,6 +39,15 @@
 
 .description-col
   width: 50%
+
+.hourly-column
+  width: 15%
+.hours-column
+  width: 15%
+.total-column
+  width: 15%
+.action-column
+  width: 5%
 
 .entry-controls
   display: inline-block
