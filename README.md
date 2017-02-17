@@ -21,7 +21,7 @@ A simple Symfony time sheet exercise.
  - VirtualBox
  - Vagrant
  - NodeJs
- 
+
 ## Get Started
 
 This exercise is run on a Homestead Vagrant machine.
@@ -32,7 +32,7 @@ composer install
 ```
 
 	NOTE: Composer will ask for some parameter information, see the Parameters.yml section below.
-	
+
 After composer is done installing the dependencies, continue by running the following:
 
 ```bash
@@ -83,14 +83,13 @@ php bin/console doctrine:database:create
 	character set to use utf8mb4 by default but, because this is just a
 	practice exercise, you can skip this part if you want. See
 	https://symfony.com/doc/current/doctrine.html for more details.
-	
+
 ### Create Database Schema
 
 To create the schema for the database, run the following in the php-exercise
 folder on your vagrant machine:
 
 ```bash
-./bin/console doctrine:migration:generate
 ./bin/console doctrine:migration:migrate -n
 ```
 
@@ -134,4 +133,4 @@ to grow. Here are a couple of things that could make it better!
  - The API could utilize PUT in addition to POST but POST works for now.
  - Only one Time Sheet is editable. The interface could allow for
    new Time Sheets to be created.
- 
+
