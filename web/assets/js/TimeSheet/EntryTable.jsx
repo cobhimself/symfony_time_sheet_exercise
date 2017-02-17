@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import EntryRow from './EntryRow.jsx';
+import util from '../util.js';
 
 class EntryTable extends Component {
     constructor(props) {
@@ -61,15 +62,18 @@ class EntryTable extends Component {
         });
     }
     calculatedTotal() {
-        var rows = this.state.rows,
+        var hours, hourlyPrice,
+            rows = this.state.rows,
             i, total = 0;
         for (i = rows.length; i--;) {
             if (rows.hasOwnProperty(i)) {
-                total += Number(Math.round(rows[i].props.data.hours * rows[i].props.data.hourlyPrice +'e2')+'e-2');
+                hours = rows[i].props.data.hours;
+                hourlyPrice = rows[i].props.data.hourlyPrice;
+                total += util.moneyRound(hours * hourlyPrice);
             }
         }
 
-        return total;
+        return util.moneyRound(total);
     }
     render() {
         return (<form><table id="timeEntryTable" className="table table-striped table-hover">
