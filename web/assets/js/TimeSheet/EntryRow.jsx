@@ -11,6 +11,10 @@ class EntryRow extends Component {
         this.doSave = this.doSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
+
+    /**
+     * Run right before this component is mounted.
+     */
     componentWillMount() {
         //Set the save/cancel buttons to be hidden initially.
         this.setState({
@@ -25,9 +29,23 @@ class EntryRow extends Component {
             entryIdString: (this.props.data.id) ? "entry_" + this.props.data.id : 'new'
         })
     }
+
+    /**
+     * Get a specific key from this row's data.
+     *
+     * @param {String} key
+     */
     get(key) {
         return this.state.data[key];
     }
+
+    /**
+     * Handle a change to an input field.
+     *
+     * @param {String} key The key within this row's data to be
+     *                     updated on change.
+     * @param {Event} event The event that was triggered.
+     */
     handleChange(key, event) {
         var newVal = event.target.value;
         this.setState(function (prevState, props){
@@ -41,7 +59,7 @@ class EntryRow extends Component {
     /**
      * Add up the total for this entry row.
      *
-     * @return {number}
+     * @return {Number}
      */
     getTotal() {
         //This silly looking rounding method helps JavaScript round more precisely
@@ -208,6 +226,12 @@ class EntryRow extends Component {
         return {display: val};
     }
 
+    handleKeyUp(event) {
+        if (event.keyCode === 13) {
+            this.doSave(this.get('id'));
+        }
+    }
+
     /**
      * Render!
      *
@@ -219,18 +243,18 @@ class EntryRow extends Component {
         }
         return (<tr className={this.state.className} id={this.state.entryIdString}>
             <td className="js-entry-description form-group">
-                <input className="form-control" type="text" onChange={this.handleChange.bind(this, 'description')} value={this.get('description')} style={this.getInputDisplay()} />
+                <input placeholder="Description" className="form-control" type="text" onKeyUp={this.handleKeyUp.bind(this)} onChange={this.handleChange.bind(this, 'description')} value={this.get('description')} style={this.getInputDisplay()} />
                 <span style={this.getValueDisplay()}>{this.get('description')}</span>
             </td>
             <td className="js-entry-hourlyPrice form-group">
-                <input type="text" className="form-control" size="4" onChange={this.handleChange.bind(this, 'hourlyPrice')} value={this.get('hourlyPrice')} style={this.getInputDisplay()} />
-                <span style={this.getValueDisplay()}>{this.get('hourlyPrice')}</span>
+                <input placeholder="Hourly Price" type="text" className="form-control" size="4" onKeyUp={this.handleKeyUp.bind(this)} onChange={this.handleChange.bind(this, 'hourlyPrice')} value={this.get('hourlyPrice')} style={this.getInputDisplay()} />
+                <span style={this.getValueDisplay()}>${this.get('hourlyPrice')}</span>
             </td>
             <td className="js-entry-hours form-group">
-                <input type="text" className="form-control" size="4" onChange={this.handleChange.bind(this, 'hours')} value={this.get('hours')} style={this.getInputDisplay()} />
+                <input placeholder="Hours" type="text" className="form-control" size="4" onKeyUp={this.handleKeyUp.bind(this)} onChange={this.handleChange.bind(this, 'hours')} value={this.get('hours')} style={this.getInputDisplay()} />
                 <span style={this.getValueDisplay()}>{this.get('hours')}</span>
             </td>
-            <td className="js-entry-total row-total">{this.getTotal()}</td>
+            <td className="js-entry-total row-total">${this.getTotal()}</td>
             <td className="entry-controls">
                     <span>
                         <button type="button" className="js-entry-save btn btn-success" onClick={() => this.doSave(this.get('id'))} style={{display: this.state.saveButtonDisplay}}><i className="glyphicon glyphicon-floppy-disk"></i></button>
