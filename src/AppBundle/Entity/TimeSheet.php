@@ -1,16 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: cbrooks
- * Date: 12/30/16
- * Time: 11:57 AM
- */
-
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

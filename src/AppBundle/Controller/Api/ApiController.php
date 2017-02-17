@@ -2,14 +2,10 @@
 
 namespace AppBundle\Controller\Api;
 
-use AppBundle\Api\ApiProblem;
-use AppBundle\Api\ApiProblemException;
 use AppBundle\Entity\TimeSheet;
 use AppBundle\Entity\TimeSheetEntry;
-use Doctrine\DBAL\Logging\DebugStack;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

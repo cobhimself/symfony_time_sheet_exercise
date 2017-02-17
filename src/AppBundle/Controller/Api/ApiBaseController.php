@@ -36,6 +36,13 @@ abstract class ApiBaseController extends Controller {
         return $problem;
     }
 
+    /**
+     * Get a Missing Data Problem.
+     *
+     * @param array|string $missing An array of missing API keys.
+     *
+     * @return ApiProblem
+     */
     protected function getMissingDataProblem($missing) {
         $problem = new ApiProblem(422, ApiProblem::TYPE_MISSING_DATA);
         $problem->set('missing', $missing);
@@ -58,6 +65,12 @@ abstract class ApiBaseController extends Controller {
         );
     }
 
+    /**
+     * Get the content of the request and decode it into JSON.
+     *
+     * @param Request $request
+     * @return mixed
+     */
     protected function getDecodedJsonFromRequest(Request $request) {
         
         $data = json_decode($request->getContent());
@@ -75,7 +88,7 @@ abstract class ApiBaseController extends Controller {
      * Verify the given data meets the requirements for the given class.
      *
      * @param String $class The class name.
-     * @param stdClass|array $data
+     * @param \stdClass|array $data
      */
     protected function assertDataMeetsRequirements($class, $data) {
         $missing = $class::getMissingDataKeys($data);

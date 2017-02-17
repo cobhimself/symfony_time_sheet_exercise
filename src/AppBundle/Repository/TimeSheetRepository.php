@@ -3,7 +3,6 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\TimeSheet;
-use Doctrine\ORM\EntityRepository;
 
 class TimeSheetRepository extends BaseRepository {
 

@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: cbrooks
- * Date: 1/16/17
- * Time: 9:44 AM
- */
-
 namespace AppBundle\Entity;
 
 
@@ -13,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait CreatedUpdatedTrait {
     /**
+     * Set the created and updated at properties at pre-persist.
+     *
      * @ORM\PrePersist()
      */
     public function setCreatedAndUpdatedAtPrePersist() {
@@ -23,6 +18,8 @@ trait CreatedUpdatedTrait {
     }
 
     /**
+     * Set the updated at property at pre-persist.
+     *
      * @ORM\PreUpdate()
      * @ORM\PrePersist()
      */
