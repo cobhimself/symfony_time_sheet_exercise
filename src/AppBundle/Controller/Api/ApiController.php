@@ -168,6 +168,13 @@ class ApiController extends ApiBaseController
     /**
      * POST one or more new time sheets
      *
+     * Request body JSON should contain the following:
+     *
+     * {
+     *  id: int
+     *  billTo: string
+     * }
+     *
      * @Route("/api/timesheet", name="api_post_timesheet")
      * @Method("POST")
      * @param Request $request
@@ -183,9 +190,14 @@ class ApiController extends ApiBaseController
 
         foreach ($data as $row) {
             $this->assertDataMeetsRequirements('\AppBundle\Entity\TimeSheet', $row);
-            $timeSheet = new TimeSheet();
+            if (isset($row->id)) {
+                $timeSheet = $em->getReference('AppBundle\Entity\TimeSheet', $row->id);
+            } else {
+                $timeSheet = new TimeSheet();
+            }
             $timeSheet->setBillTo($row->billTo);
             $em->persist($timeSheet);
+
             $newTimeSheets[] = $timeSheet;
         }
 
