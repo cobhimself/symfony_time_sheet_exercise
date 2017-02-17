@@ -16,7 +16,7 @@ class TimeSheet extends Component {
         this.getTimeSheetData();
     }
     handleChange(e) {
-        this.setState({[e.target.name]: event.target.value});
+        this.setState({[e.target.name]: e.target.value});
     }
     render() {
         
@@ -43,6 +43,7 @@ class TimeSheet extends Component {
                     <div className="form-group">
                         <label htmlFor="billTo">Bill To</label>
                         <textarea className="form-control" rows="3" id="billTo" cols="100" name="billTo" onChange={this.handleChange} value={this.state.billTo}/>
+                        <button className="btn btn-default" type="button" id="save" onClick={this.saveTimeSheetData.bind(this)}>Save</button>
                     </div>
                 </div>
             </div>
@@ -52,7 +53,6 @@ class TimeSheet extends Component {
             <div className="row btn-bar">
                 <div className="pull-right">
                     <button className="btn btn-default" type="button" id="generatePDF">Generate PDF</button>
-                    <button className="btn btn-default" type="button" id="save">Save</button>
                 </div>
             </div>
         </div>);
@@ -93,6 +93,29 @@ class TimeSheet extends Component {
             }).catch(function (error) {
             console.log('request failed', error);
         });
+    }
+    saveTimeSheetData() {
+        var that = this;
+        fetch('/api/timesheet', {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify([{'id': this.state.id, 'billTo': this.state.billTo}])
+        })
+            .then(this.checkStatus)
+            .then(this.parseJSON)
+            .then(function (data) {
+                //Posting new data returns the data for us again.
+                console.log('TimeSheet data done loading.', data);
+            })
+            .catch(function (error) {
+                console.log('request failed', error);
+                if (error.jsonResponse) {
+                    console.log('jsonResponse', error.jsonResponse);
+                }
+            });
     }
 }
 
