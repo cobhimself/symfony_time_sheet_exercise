@@ -23,8 +23,11 @@ class FeatureContext extends MinkContext implements Context {
     use KernelDictionary;
 
     private $jsonData;
+
     private $postData;
+
     private $useBadData = false;
+
     private $entityIdToDelete;
 
     const acceptableNames = [
@@ -63,6 +66,11 @@ class FeatureContext extends MinkContext implements Context {
         $this->setForeignKeyChecks(1);
     }
 
+    /**
+     * Set the foreign key checks value on the database based upon the given val.
+     *
+     * @param {int} $val 1 for true, 0 for false.
+     */
     private function setForeignKeyChecks($val) {
         /**
          * @type \Doctrine\DBAL\Connection
@@ -72,6 +80,8 @@ class FeatureContext extends MinkContext implements Context {
     }
 
     /**
+     * Get the entity manager.
+     *
      * @return \Doctrine\ORM\EntityManager
      */
     private function getEntityManager() {
@@ -107,6 +117,12 @@ class FeatureContext extends MinkContext implements Context {
 //        $this->getSession()->visit($uri);
     }
 
+    /**
+     * Camelize, not carmelize, the given string.
+     *
+     * @param string $string
+     * @return string
+     */
     private function camelize($string) {
         return Inflector::camelize($string);
     }
@@ -154,6 +170,11 @@ class FeatureContext extends MinkContext implements Context {
         Assert::assertEquals($value, $data->$key);
     }
 
+    /**
+     * Get the json data as a class object
+     *
+     * @return stdClass
+     */
     public function getObjectFromJson() {
         if (!$this->jsonData) {
             $this->jsonData = json_decode($this->getSession()->getDriver()->getContent());

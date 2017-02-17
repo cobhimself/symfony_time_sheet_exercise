@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import EntryRow from './EntryRow.jsx';
 import util from '../util.js';
 
+/**
+ * @class EntryTable
+ */
 class EntryTable extends Component {
     constructor(props) {
         super(props);
-        console.log('Constructing EntryTable. Props:', props);
+        //console.log('Constructing EntryTable. Props:', props);
 
         var entry,
             entries = this.props.entries,
@@ -20,15 +23,31 @@ class EntryTable extends Component {
                 rows.push(this.compileEntryRow(entries[entry].id, data, 'existing'));
             }
         }
-        console.log('EntryTable final rows:', rows);
+        //console.log('EntryTable final rows:', rows);
 
         this.state = {
             rows: rows
         }
     }
+
+    /**
+     * Compile an EntryRow component based upon the given arguments.
+     *
+     * @param {String} key The component's unique key
+     * @param {Object} data The data to associated with the EntryRow
+     * @param {String} type One of 'existing' or 'new'.
+     *
+     * @return {EntryRow}
+     */
     compileEntryRow(key, data, type) {
         return (<EntryRow key={key} data={data} type={type} afterDelete={this.afterDelete.bind(this)}/>);
     }
+
+    /**
+     * Run after a new entry row is added by the user.
+     *
+     * @param {Object} data The data to associate with the new EntryRow
+     */
     afterAdd(data) {
         this.setState(function (prevState, props){
             var rows = prevState.rows;
@@ -43,13 +62,19 @@ class EntryTable extends Component {
             .getElementsByClassName('js-entry-description')[0]
             .getElementsByTagName('input')[0].focus();
     }
+
+    /**
+     * Run after an EntryRow is deleted.
+     *
+     * @param {Number} id The id of the row to delete.
+     */
     afterDelete(id) {
         this.setState(function (prevState, props) {
             var i, toDelete, rows = prevState.rows;
             for (i = rows.length; i--;) {
                 if (rows.hasOwnProperty(i)) {
                     if (rows[i].props.data.id === id) {
-                        console.log('Matching row: ', rows);
+                        //console.log('Matching row: ', rows);
                         toDelete = i;
                         break;
                     }
@@ -61,6 +86,12 @@ class EntryTable extends Component {
             return  prevState;
         });
     }
+
+    /**
+     * Calculate and return the total cost for all the EntryRows.
+     *
+     * @return {Number}
+     */
     calculatedTotal() {
         var hours, hourlyPrice,
             rows = this.state.rows,
@@ -75,6 +106,12 @@ class EntryTable extends Component {
 
         return util.moneyRound(total);
     }
+
+    /**
+     * Render the EntryTable.
+     *
+     * @return {EntryTable}
+     */
     render() {
         return (<form><table id="timeEntryTable" className="table table-striped table-hover">
             <thead>
@@ -99,6 +136,13 @@ class EntryTable extends Component {
             </tfoot>
         </table></form>);
     }
+
+    /**
+     * Check the status of the response object and make sure it's bueno.
+     *
+     * @param {Object} response
+     * @return {Object}
+     */
     checkStatus(response) {
         if (response.status >= 200 && response.status < 300) {
             return response

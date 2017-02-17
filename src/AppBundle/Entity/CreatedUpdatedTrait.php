@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait CreatedUpdatedTrait {
     /**
+     * Set the created and updated at properties at pre-persist.
+     *
      * @ORM\PrePersist()
      */
     public function setCreatedAndUpdatedAtPrePersist() {
@@ -23,6 +25,8 @@ trait CreatedUpdatedTrait {
     }
 
     /**
+     * Set the updated at property at pre-persist.
+     *
      * @ORM\PreUpdate()
      * @ORM\PrePersist()
      */

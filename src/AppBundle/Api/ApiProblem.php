@@ -42,12 +42,19 @@ class ApiProblem {
         $this->title = self::$titles[$type];
     }
 
+    /**
+     * Get the title of this API Problem
+     *
+     * @return string
+     */
     public function getTitle() {
         return $this->title;
     }
 
     /**
-     * @return mixed
+     * Get the status code associated with this API Problem
+     *
+     * @return integer
      */
     public function getStatusCode() {
         return $this->statusCode;

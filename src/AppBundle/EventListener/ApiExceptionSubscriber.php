@@ -34,6 +34,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
     }
 
     /**
+     * Intercept ApiProblemExceptions and send the exception as a JSON response.
+     *
      * @param GetResponseForExceptionEvent $event
      */
     public function onKernelException(GetResponseForExceptionEvent $event) {

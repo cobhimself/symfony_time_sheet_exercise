@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import util from '../util';
 
+/**
+ * @class EntryRow
+ */
 class EntryRow extends Component {
     constructor(props) {
         super(props);
@@ -85,6 +88,9 @@ class EntryRow extends Component {
         console.log(this.state);
     }
 
+    /**
+     * Clear the input fields for a new TimeSheetEntry.
+     */
     clearInputs() {
         console.log('current state: ', this.state);
         this.setState(function (prevState, props) {
@@ -96,6 +102,13 @@ class EntryRow extends Component {
         });
     }
 
+    /**
+     * Check the status of the response object.
+     *
+     * @param {Object} response
+     *
+     * @return {*}
+     */
     checkStatus(response) {
 
         if (response.status >= 200 && response.status < 300) {
@@ -111,6 +124,11 @@ class EntryRow extends Component {
         }
     }
 
+    /**
+     * Parse the JSON in the response.
+     *
+     * @param {Object} response
+     */
     parseJSON(response) {
         return response.json()
     }
@@ -227,6 +245,11 @@ class EntryRow extends Component {
         return {display: val};
     }
 
+    /**
+     * Handle a key-up event on an input field
+     *
+     * @param event
+     */
     handleKeyUp(event) {
         if (event.keyCode === 13) {
             this.doSave(this.get('id'));
