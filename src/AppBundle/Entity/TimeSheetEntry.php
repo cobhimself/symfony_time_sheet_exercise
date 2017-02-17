@@ -121,7 +121,7 @@ class TimeSheetEntry extends BaseEntity {
      */
     public function getTotal()
     {
-        return $this->hourlyPrice * $this->hours;
+        return round($this->hourlyPrice * $this->hours, 2);
     }
 
     /**

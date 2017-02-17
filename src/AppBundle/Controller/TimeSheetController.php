@@ -7,7 +7,7 @@ use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -16,46 +16,30 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TimeSheetController extends Controller
 {
+
     /**
-     * Update a time sheet.
+     * Get a generated PDF of the timesheet
      *
-     * @Route(
-     *     "/timesheet/{id}/update",
-     *     name="timesheet_update",
-     * )
-     * @Method("Get")
+     * @Route("/get/pdf/{id}", name="generate_pdf")
      *
      * @param Request $request
      * @param TimeSheet $timeSheet
      *
-     * @return JsonResponse JSON that provides a 'success' boolean. If the time
-     *                      sheet was not updated successfully, an 'error' key
-     *                      is provided with an error message.
+     * @return Response
      */
-    public function updateTimeSheetAction(Request $request, TimeSheet $timeSheet)
+    public function getPDFAction(Request $request, TimeSheet $timeSheet)
     {
-        $timeSheet->setDataFromRequest($request);
+        $html = $this->render('pdf/index.html.twig', array(
+            'timeSheet'  => $timeSheet
+        ));
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($timeSheet);
-
-        $error = false;
-
-        try {
-            $em->flush();
-            $success = true;
-        } catch (ORMException $e) {
-            $success = false;
-            $error = $e->getMessage();
-        }
-
-        $data = ['success' => $success];
-
-        if (!$success)
-        {
-            $data['error'] = $error;
-        }
-
-        return $this->json($data);
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type'          => 'application/pdf',
+                'Content-Disposition'   => 'attachment; filename="file.pdf"'
+            )
+        );
     }
 }
