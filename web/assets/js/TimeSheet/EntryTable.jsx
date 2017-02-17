@@ -36,6 +36,11 @@ class EntryTable extends Component {
             prevState.rows = rows;
             return prevState;
         });
+
+        //Move focus back to the description field for the add entry row
+        document.getElementById('new')
+            .getElementsByClassName('js-entry-description')[0]
+            .getElementsByTagName('input')[0].focus();
     }
     afterDelete(id) {
         this.setState(function (prevState, props) {
@@ -55,6 +60,17 @@ class EntryTable extends Component {
             return  prevState;
         });
     }
+    calculatedTotal() {
+        var rows = this.state.rows,
+            i, total = 0;
+        for (i = rows.length; i--;) {
+            if (rows.hasOwnProperty(i)) {
+                total += Number(Math.round(rows[i].props.data.hours * rows[i].props.data.hourlyPrice +'e2')+'e-2');
+            }
+        }
+
+        return total;
+    }
     render() {
         return (<form><table id="timeEntryTable" className="table table-striped table-hover">
             <thead>
@@ -70,6 +86,13 @@ class EntryTable extends Component {
                 {this.state.rows}
                 <EntryRow key="new" data={{timeSheetId: this.props.timeSheetId}} type="new" afterAdd={this.afterAdd.bind(this)}/>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td colSpan="2">&nbsp;</td>
+                    <td className="totals-label">Total:</td>
+                    <td className="timesheet-total">${this.calculatedTotal()}</td>
+                </tr>
+            </tfoot>
         </table></form>);
     }
     checkStatus(response) {
