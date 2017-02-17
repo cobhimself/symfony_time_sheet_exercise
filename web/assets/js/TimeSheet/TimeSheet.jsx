@@ -18,6 +18,9 @@ class TimeSheet extends Component {
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value});
     }
+    getPdf() {
+        document.location = '/get/pdf/' + this.state.id;
+    }
     render() {
         
         if (!this.state.billTo) {
@@ -52,7 +55,7 @@ class TimeSheet extends Component {
             </div>
             <div className="row btn-bar">
                 <div className="pull-right">
-                    <button className="btn btn-default" type="button" id="generatePDF">Generate PDF</button>
+                    <button className="btn btn-default" type="button" id="generatePDF" onClick={this.getPdf.bind(this)}>Generate PDF</button>
                 </div>
             </div>
         </div>);

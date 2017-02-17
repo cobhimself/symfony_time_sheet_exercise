@@ -156,4 +156,20 @@ class TimeSheet extends BaseEntity {
     public static function getMissingDataKeys($data) {
         return parent::getMissingDataRequirements($data, ['billTo']);
     }
+
+    /**
+     * Get the calculated total of all time sheet entry costs.
+     *
+     * @return float|int
+     */
+    public function getCalculatedTotal()
+    {
+        $total = 0;
+
+        foreach ($this->getEntries() as $entry) {
+            $total += $entry->getTotal();
+        }
+
+        return $total;
+    }
 }
