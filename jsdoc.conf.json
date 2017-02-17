@@ -1,0 +1,26 @@
+{
+    "opts": {
+        "template": "./node_modules/ink-docstrap/template/",
+        "destination": "./docs/PE_JS/",
+        "recurse": true,
+        "package": "./package.json",
+        "readme": "./web/assets/js/README.md"
+    },
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "source": {
+        "include": ["./web/assets/js/"],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "copyright": "Collin Brooks",
+        "systemName": "PHP Exercise",
+        "theme": "slate",
+        "outputSourceFiles": false
+    }
+}

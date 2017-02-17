@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h1 class="pull-right">Development Invoice</h1>
+        </div>
+        <div class="row">
+            <div class="pull-right">Date: {{ 'now'|date("F j, Y") }}</div>
+        </div>
+        <div class="row">
+            <div class="form">
+                <div class="form-group">
+                    <label htmlFor="billTo">Bill To</label>
+                    {{ timeSheet.billTo }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <form>
+                <table id="timeEntryTable" class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="description-col">Description</th>
+                        <th class="hourly-column">Hourly Price</th>
+                        <th class="hours-column">Hours</th>
+                        <th class="total-column">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for entry in timeSheet.entries %}<tr class={this.state.class} id={this.state.entryIdString}>
+                        <td class="js-entry-description form-group">
+                            {{ entry.description }}
+                        </td>
+                        <td class="js-entry-hourlyPrice form-group">
+                            ${{ entry.hourlyPrice }}
+                        </td>
+                        <td class="js-entry-hours form-group">
+                            {{ entry.hours }}
+                        </td>
+                        <td class="js-entry-total row-total">${{ entry.total }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colSpan="2">&nbsp;</td>
+                        <td class="totals-label">Total:</td>
+                        <td class="timesheet-total">${{ timeSheet.calculatedTotal }}</td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </form>
+        </div>
+    </div>
+{% endblock %}
