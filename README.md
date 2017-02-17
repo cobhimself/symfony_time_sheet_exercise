@@ -31,7 +31,9 @@ To get started, run the following:
 composer install
 ```
 
-	NOTE: Composer will ask for some parameter information, see the Parameters.yml section below.
+	NOTE: Composer will ask for some parameter information,
+	see the Parameters.yml section below when composer says
+	"Some parameters are missing. Please provide them."
 
 After composer is done installing the dependencies, continue by running the following:
 
@@ -112,6 +114,9 @@ following from within the project directory on the vagrant machine:
 ```bash
 ./vendor/bin/behat
 ```
+
+	NOTE: This will flush all the data in your database.
+	
 ### Launch!
 
 Open http://homestead.app in your browser and you should see the
@@ -133,4 +138,9 @@ to grow. Here are a couple of things that could make it better!
  - The API could utilize PUT in addition to POST but POST works for now.
  - Only one Time Sheet is editable. The interface could allow for
    new Time Sheets to be created.
+ - Some node modules need to be upgraded.
+ - Code compilation and minification are not prepped for production.
+ - A nifty installation script would be neat.
+ - Some JS functionality could be refactored and moved into the util.js
+   file to keep things DRY.
 
